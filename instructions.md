@@ -47,8 +47,9 @@ The user portal aspect of the application will help the user navigate the follow
     e. The user can optionally upload a transcript batch report that will automatically populate student folders with their transcript -- student's first, last , and date of birth must be present on the first page of the transcript
 2. Organize digitized records and upload to the cloud
 3. Update the person roster via email to Reggie or via the application user interface.
-4. Users will optionally be allowed to and be shown how to create an email alias for Reggie -- otherwise their email assistant will have an @simbabuilds email.
-5. A dedicated page that shows how drive folders and records must be organized for Reggie records management to work 
+4. An space for users to upload their custom email templates 
+5. Users will optionally be allowed to and be shown how to create an email alias for Reggie -- otherwise their email assistant will have an @simbabuilds email.
+6. A dedicated page that shows how drive folders and records must be organized for Reggie records management to work 
 
 #Backend Endpoints
 
