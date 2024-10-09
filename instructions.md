@@ -1,13 +1,15 @@
 #Project Overview
 I am building a web applicaiton called Reggie that is a software product that will speed up workflows in the education admin space.
-This is the front end of the applicaiton built in NextJS.
+This is the front end of the application to be built in NextJS.
 You will be using NextJS, as well as shadcn, tailwind, and lucid icon.
-The backend is in python and it will handle all complex logic as well as database interactions.
+The backend is in python and it will handle all complex logic and database interactions.
 
 If there is specific API documentation you need to complete a task, please ask for it instead of guessing.
 
 #Core Functionalities
-The public facing interface will include the following information:
+
+The public facing interface will include the following pages:
+
 1. Landing page -- SEO optimized 
     a. Marketing notes: 
         i. “No 4 month lead time: have your records digitized as soon as you can scan them to yourself”
@@ -18,7 +20,7 @@ The public facing interface will include the following information:
     d. Pricing: Option 1 -- Digitize for $100.  Option 2 -- $50/mo. for Reggie assistant, digitization included.
     e. Login and sign up options
 
-2. About page: "This digitization process was designed by Cameron Higtower, a former registrar with a software engineering background.  Reggie is simply a public version of the AI tools and processes that he used on the job.
+2. About page: "This digitization process was designed by Cameron Higtower, a former school Registrar and IT professional with a software engineering background.  This digitization process and "Reggie" assistant is simply a public version of the AI tools and processes that Cameron used on the job.
     a. Contact at bottom
     b. Link to demo page
 
@@ -33,6 +35,7 @@ The public facing interface will include the following information:
 
 
 The user portal aspect of the application will help the user navigate the following:
+
 1. Digitize their school's paper records.  The set up process for digitization will include the following:
     a. A student list csv will be uploaded into the application with headers for student first name, last name, and date of birth -- a small AI will be used to map to correct headers to decrease need for user header naming precision
         i. Optionally, user uploads a staff list csv if they want to digitize and manage staff records
