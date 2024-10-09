@@ -6,11 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { FileUp, Users, FileSpreadsheet } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { FileUp, Users, FileSpreadsheet, Mail } from 'lucide-react';
 
 export default function DashboardPage() {
   const [studentCsv, setStudentCsv] = useState<File | null>(null);
   const [staffCsv, setStaffCsv] = useState<File | null>(null);
+  const [templateContent, setTemplateContent] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
 
   const handleStudentCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -24,14 +27,22 @@ export default function DashboardPage() {
     }
   };
 
+  const handleAddTemplate = () => {
+    // TODO: Implement adding template logic
+    console.log('Adding template:', { content: templateContent, description: templateDescription });
+    // Reset form fields after submission
+    setTemplateContent('');
+    setTemplateDescription('');
+  };
+
   return (
     <div className="container mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
       <Tabs defaultValue="digitize" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="digitize">Digitize Records</TabsTrigger>
-          <TabsTrigger value="organize">Organize Records</TabsTrigger>
           <TabsTrigger value="update">Update Roster</TabsTrigger>
+          <TabsTrigger value="templates">Set Email Templates</TabsTrigger>
         </TabsList>
         <TabsContent value="digitize">
           <Card>
@@ -64,17 +75,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="organize">
-          <Card>
-            <CardHeader>
-              <CardTitle>Organize Digitized Records</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">Organize your digitized records and upload them to the cloud.</p>
-              <Button>Start Organization Process</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
         <TabsContent value="update">
           <Card>
             <CardHeader>
@@ -88,6 +88,36 @@ export default function DashboardPage() {
                 <Input id="rosterUpdate" type="file" accept=".csv" />
               </div>
               <Button className="mt-2">Upload Roster</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="templates">
+          <Card>
+            <CardHeader>
+              <CardTitle>Set Email Templates</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="templateContent">Template Content</Label>
+                  <Textarea
+                    id="templateContent"
+                    placeholder="Enter your email template content here..."
+                    value={templateContent}
+                    onChange={(e) => setTemplateContent(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="templateDescription">Template Description</Label>
+                  <Input
+                    id="templateDescription"
+                    placeholder="Enter a brief description of the template"
+                    value={templateDescription}
+                    onChange={(e) => setTemplateDescription(e.target.value)}
+                  />
+                </div>
+                <Button onClick={handleAddTemplate}>Add Template</Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -118,12 +148,12 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <FileSpreadsheet className="mr-2" />
-              Reggie Assists
+              <Mail className="mr-2" />
+              Email Templates
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">987</p>
+            <p className="text-3xl font-bold">3</p>
           </CardContent>
         </Card>
       </div>
