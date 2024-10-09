@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Background from '@/components/Background';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,7 +27,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen">
+          <Background />
+          <div className="flex flex-col min-h-screen relative z-10">
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />

@@ -18,15 +18,15 @@ export default function FAQPage() {
       answer: "Same day access."
     },
     {
-      question: "Is this process FERPA compliant?",
-      answer: "Yes, we have obtained all required FERPA authorizations."
+      question: "Is this application FERPA compliant?",
+      answer: "Yes, we are in compliance with all FERPA regulations."
     },
     {
       question: "My records are already digitized -- can I still use Reggie?",
-      answer: "Yes, but Reggie needs specific file organization and names. Please contact support for details."
+      answer: "Yes, but Reggie requires specific file organization and names to work properly. Please contact support for details."
     },
     {
-      question: "What systems is Reggie compatible with?",
+      question: "Can Reggie work with Microsoft 365?",
       answer: "Currently, Reggie is only compatible with Google Workspace and GSuite. You will need to create a school-managed Google account if you don't have one."
     }
   ];

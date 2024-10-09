@@ -22,9 +22,9 @@ The public facing interface will include the following pages:
 
 2. About page: "This digitization process was designed by Cameron Higtower, a former school Registrar and IT professional with a software engineering background.  This digitization process and "Reggie" assistant is simply a public version of the AI tools and processes that Cameron used on the job.
     a. Contact at bottom
-    b. Link to demo page
+    b. Link to demos page
 
-3. Dedicated demo page showcasing digitization and Reggie in action
+3. Dedicated demos page showcasing digitization and Reggie in action
     a. "See Reggie's spreadsheet skills for yourself" -- users will be directed to the sign up and permissions pages -- then given instructions and examples for using his spreadsheet capabailities -- they will get 10 emails to Reggie without signing up for a plan  
 
 4. FAQ page: 

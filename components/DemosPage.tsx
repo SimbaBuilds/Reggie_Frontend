@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function DemoPage() {
+export default function DemosPage() {
   const [showInstructions, setShowInstructions] = useState(false);
 
   return (
@@ -19,7 +19,7 @@ export default function DemoPage() {
         <TabsContent value="digitization">
           <Card>
             <CardHeader>
-              <CardTitle>Digitization Demo</CardTitle>
+              <CardTitle>Digitization Demos</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="aspect-w-16 aspect-h-9 mb-6">

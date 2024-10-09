@@ -18,7 +18,7 @@ export default function Header() {
         </Link>
         <div className="flex items-center space-x-4">
           <Link href="/about" className="text-foreground hover:text-primary">About</Link>
-          <Link href="/demo" className="text-foreground hover:text-primary">Demo</Link>
+          <Link href="/demos" className="text-foreground hover:text-primary">Demos</Link>
           <Link href="/faq" className="text-foreground hover:text-primary">FAQ</Link>
           {isLoggedIn ? (
             <>

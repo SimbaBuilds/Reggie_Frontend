@@ -7,13 +7,13 @@ export default function AboutPage() {
       <h1 className="text-4xl font-bold mb-8 text-center">About Reggie</h1>
       <div className="max-w-3xl mx-auto">
         <p className="mb-6 text-lg">
-          This digitization process was designed by Cameron Higtower, a former school Registrar and IT professional with a software engineering background. The Reggie assistant is simply a public version of the AI tools and processes that Cameron used on the job.
+          This digitization process was designed by Cameron Higtower, a former school Registrar and IT professional with a software engineering background. The Reggie Assistant is a distillation of the AI tools and processes that Cameron used on the job made available to you.
         </p>
         <p className="mb-6 text-lg">
           Our mission is to streamline administrative workflows in educational institutions, saving time and resources while improving efficiency.
         </p>
         <div className="text-center mb-12">
-          <Link href="/demo">
+          <Link href="/demos">
             <Button size="lg">See Reggie in Action</Button>
           </Link>
         </div>
