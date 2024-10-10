@@ -15,7 +15,7 @@ export default function FAQPage() {
     },
     {
       question: "How long after we scan will we have access to the digitized records?",
-      answer: "Same day access."
+      answer: "You will have access to the digitized records within 24 hours."
     },
     {
       question: "Is this application FERPA compliant?",
@@ -23,11 +23,11 @@ export default function FAQPage() {
     },
     {
       question: "My records are already digitized -- can I still use Reggie?",
-      answer: "Yes, but Reggie requires specific file organization and names to work properly. Please contact support for details."
+      answer: "Yes, but you will have to work with Reggie to get your records organized in a way that Reggie can understand."
     },
     {
       question: "Can Reggie work with Microsoft 365?",
-      answer: "Currently, Reggie is only compatible with Google Workspace and GSuite. You will need to create a school-managed Google account if you don't have one."
+      answer: "Currently, Reggie is only compatible with Google Workspace and GSuite. You will need to create a school-managed Google account to use our services"
     }
   ];
 
