@@ -34,12 +34,12 @@ The user portal aspect of the application will help the user navigate the follow
     2. For the scanning process, users will be given two options for file tagging:
         1. Use a consistent first page that contains person first, last, and DOB and provide a one sentence natural language description of where those items can be found on the page (for vision-enabled AI processing).
         2. Obtain a downloadable pdf of cover pages from the application -- each of which can be placed on top of the person record so that the OCR or AI-vision model tool can properly process the record.  Note: Multiple sorting options will be given so that the page order matches the user's scanning order (A-Z/Z-A, By grade A-Z/Z-A).
-    3. How-to content will be available for all of the above.
-    d. A testing/trouble-shooting process will be built into the UI where the user uploads a person list csv and transcripts and tries scanning in 5 or so files using their chosen file tagging method
-    e. The user can optionally upload a transcript batch report that will automatically populate student folders with their transcript -- student's first, last , and date of birth must be present on the first page of the transcript
+    4. A testing/trouble-shooting process will be built into the UI where the user uploads a person list csv and transcripts and tries scanning in 5 or so files using their chosen file tagging method
+    5. The user can optionally upload a transcript batch report that will automatically populate student folders with their transcript -- student's first, last , and date of birth must be present on the first page of the transcript
     6. If a users records are already digitized, there will be functionality for them to upload all of their person records
 2. Organize digitized records and upload to the cloud
 3. Update the person roster via email to Reggie or via the application user interface.
-4. An space for users to upload their custom email templates 
+4. A space for users to upload their custom email templates 
 5. Users will optionally be allowed to and be shown how to create an email alias for Reggie -- otherwise their email assistant will have an @simbabuilds email.
 6. A dedicated page that shows how drive folders and records must be organized for Reggie records management to work 
+7. How-to content will be available for all of this.
