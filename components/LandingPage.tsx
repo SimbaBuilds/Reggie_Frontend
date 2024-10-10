@@ -19,7 +19,8 @@ export default function LandingPage() {
             <Button variant="outline" size="lg" className="text-lg px-8 py-6">Watch Demos</Button>
           </Link>
         </div>
-      </section>
+      </section>   
+
 
       <section className="mb-16">
         <h2 className="text-4xl font-semibold mb-8 text-center text-primary">Key Features</h2>
@@ -60,31 +61,49 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+
       <section className="mb-16">
         <h2 className="text-4xl font-semibold mb-8 text-center text-primary">Pricing</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="bg-card dark:bg-gray-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-2xl">Option 1: Digitize</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold mb-4 text-primary">$100</p>
-              <p className="text-lg">One-time fee for digitization service</p>
-              <Button className="mt-4 text-lg px-6 py-3" variant="outline">Choose Plan</Button>
+              <p className="text-lg">One-time fee for digitization service.</p>
+              <Button className="mt-4 text-lg px-6 py-3">Choose Option</Button>
             </CardContent>
           </Card>
           <Card className="bg-card dark:bg-gray-800">
-          <CardHeader>
-              <CardTitle className="text-2xl">Option 2: Reggie Assistant</CardTitle>
+            <CardHeader>
+              <CardTitle className="text-2xl">Option 2: Reggie Assistant for Smaller Organizations</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold mb-4 text-primary">$40/month</p>
-              <p className="text-lg">Includes Reggie assistant and digitization</p>
+              <p className="text-lg">For organizations with less than 500 people.</p>
+              <p className="text-lg">Includes Reggie assistant and digitization.</p>
+              <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
+            </CardContent>
+          </Card>
+          <Card className="bg-card dark:bg-gray-800">
+            <CardHeader>
+              <CardTitle className="text-2xl">Option 3: Reggie Assistant for Larger Organizations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold mb-4 text-primary">$80/month</p>
+              <p className="text-lg">For organizations with 500+ people.</p>
+              <p className="text-lg">Includes Reggie assistant and digitization.</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
             </CardContent>
           </Card>
         </div>
       </section>
+
+
+
+
 
       <section className="text-center">
         <h2 className="text-4xl font-semibold mb-4 text-primary">Ready to Get Started?</h2>

@@ -19,7 +19,7 @@ export default function FAQPage() {
     },
     {
       question: "Is this application FERPA compliant?",
-      answer: "Yes, we are in compliance with all FERPA regulations."
+      answer: "Yes, we are in compliance with all FERPA regulations -- this application does not permanently store student records, only rosters."
     },
     {
       question: "My records are already digitized -- can I still use Reggie?",

@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Users, Mail, FileSpreadsheet, Info, Plus } from 'lucide-react';
+import { Users, Mail, FileSpreadsheet, Info, Plus, FileText } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -35,6 +35,17 @@ export default function DashboardPage() {
   const [newPersonFirstName, setNewPersonFirstName] = useState('');
   const [newPersonLastName, setNewPersonLastName] = useState('');
   const [newPersonDOB, setNewPersonDOB] = useState('');
+  const [transcriptPdf, setTranscriptPdf] = useState<File | null>(null);
+
+  // Add these new state variables
+  const [status, setStatus] = useState({
+    rostersUploaded: false,
+    recordsDigitized: false,
+    recordsOrganized: false,
+    transcriptsUploaded: false,
+    emailLabelsCreated: false,
+    emailTemplateCreated: false
+  });
 
   const handleStudentCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -54,6 +65,12 @@ export default function DashboardPage() {
     setTemplateDescription('');
   };
 
+  const handleTranscriptPdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setTranscriptPdf(e.target.files[0]);
+    }
+  };
+
   const totalStudents = 5678;
   const totalStaff = 38; // Example value, adjust as needed
 
@@ -61,24 +78,26 @@ export default function DashboardPage() {
     <div className="container mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
       <Tabs defaultValue="digitize" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="digitize">Digitize Records</TabsTrigger>
           <TabsTrigger value="update">Update Roster</TabsTrigger>
           <TabsTrigger value="templates">Set Email Templates</TabsTrigger>
+          <TabsTrigger value="transcripts">Upload Transcripts</TabsTrigger>
         </TabsList>
         <TabsContent value="digitize">
           <Card>
             <CardHeader>
-              <CardTitle>Digitize School Records</CardTitle>
+              <CardTitle>Digitize and Organize School Records</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="studentCsv">Upload Student List CSV</Label>
-                <Input id="studentCsv" type="file" accept=".csv" onChange={handleStudentCsvUpload} />
+                <Input id="studentCsv" type="file" accept=".csv" onChange={handleStudentCsvUpload} className="border border-input bg-background hover:bg-accent hover:text-accent-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium cursor-pointer" />
+                
               </div>
               <div>
                 <Label htmlFor="staffCsv">Upload Staff List CSV (Optional)</Label>
-                <Input id="staffCsv" type="file" accept=".csv" onChange={handleStaffCsvUpload} />
+                <Input id="staffCsv" type="file" accept=".csv" onChange={handleStaffCsvUpload} className="border border-input bg-background hover:bg-accent hover:text-accent-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium cursor-pointer" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Choose a File Tagging Option:</h3>
@@ -132,6 +151,26 @@ export default function DashboardPage() {
                 </div>
               )}
               <Button>Start Digitization Process</Button>
+              
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    Or
+                  </span>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">
+                  My records are already digitized, but I want Reggie's help to organize them in Google Drive so I can use this service.
+                </p>
+                <Button variant="outline">
+                  Organize Records
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -244,7 +283,54 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </TabsContent>
+        <TabsContent value="transcripts">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="mr-2" />
+                Upload Transcripts
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground mb-4">
+              Upload a batch report of your current students' transcripts below. <br />
+                This will allow Reggie to add your students' transcripts to their respective records folder and fetch the transcript to draft records request fulfillments. <br />
+                Students' first name, last name, and date of birth must be present on the first page of each transcript. <br />
+                Your SIS should have a transcript batch report tool. <br />
+                Upload as one large pdf with 1-2 students per page.
+              </p>
+              <div>
+                <Label htmlFor="transcriptPdf">Upload Transcript PDF</Label>
+                <Input 
+                  id="transcriptPdf" 
+                  type="file" 
+                  accept=".pdf" 
+                  onChange={handleTranscriptPdfUpload}
+                  className="border border-input bg-background hover:bg-accent hover:text-accent-foreground file:border-0 file:bg-transparent file:text-sm file:font-medium cursor-pointer"
+                />
+              </div>
+              <p className="text-sm text-muted-foreground italic">
+                Note: This must be done once per semester.
+              </p>
+              <Button>Upload Transcripts</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
+
+      {/* New Status section */}
+      <div className="mt-8 mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Status</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {Object.entries(status).map(([key, value]) => (
+            <div key={key} className="flex items-center">
+              <div className={`w-4 h-4 rounded-full mr-2 ${value ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
         <Card>
           <CardHeader>
@@ -270,7 +356,7 @@ export default function DashboardPage() {
         </Card>
         {totalStaff > 0 && (
           <Card>
-            <CardHeader>
+            <CardHeader>              
               <CardTitle className="flex items-center">
                 <Users className="mr-2" />
                 Total Staff

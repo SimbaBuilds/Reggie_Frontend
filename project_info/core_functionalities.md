@@ -36,7 +36,8 @@ The user portal aspect of the application will help the user navigate the follow
         2. Obtain a downloadable pdf of cover pages from the application -- each of which can be placed on top of the person record so that the OCR or AI-vision model tool can properly process the record.  Note: Multiple sorting options will be given so that the page order matches the user's scanning order (A-Z/Z-A, By grade A-Z/Z-A).
     4. A testing/trouble-shooting process will be built into the UI where the user uploads a person list csv and transcripts and tries scanning in 5 or so files using their chosen file tagging method
     5. The user can optionally upload a transcript batch report that will automatically populate student folders with their transcript -- student's first, last , and date of birth must be present on the first page of the transcript
-    6. If a users records are already digitized, there will be functionality for them to upload all of their person records
+    6. If a users records are already digitized, option to organize (with Drive folder structure created for them) so that Reggie can use.
+
 2. Organize digitized records and upload to the cloud
 3. Update the person roster via email to Reggie or via the application user interface.
 4. A space for users to upload their custom email templates 
