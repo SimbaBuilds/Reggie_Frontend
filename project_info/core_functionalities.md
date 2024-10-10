@@ -1,11 +1,3 @@
-#Project Overview
-I am building a web applicaiton called Reggie that is a software product that will speed up workflows in the education admin space.
-This is the front end of the application to be built in NextJS.
-You will be using NextJS, as well as shadcn, tailwind, and lucid icon.
-The backend is in python and it will handle all complex logic and database interactions.
-
-If there is specific API documentation you need to complete a task, please ask for it instead of guessing.
-
 #Core Functionalities
 
 The public facing interface will include the following pages:
@@ -50,39 +42,3 @@ The user portal aspect of the application will help the user navigate the follow
 4. An space for users to upload their custom email templates 
 5. Users will optionally be allowed to and be shown how to create an email alias for Reggie -- otherwise their email assistant will have an @simbabuilds email.
 6. A dedicated page that shows how drive folders and records must be organized for Reggie records management to work 
-
-#Backend Endpoints
-
-
-
-
-#Current File Structure
-
-REGGIE_FRONTEND
-├── .next
-├── app
-│   ├── fonts
-│   ├── favicon.ico
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components
-│   └── ui
-│       ├── button.tsx
-│       ├── card.tsx
-│       └── input.tsx
-├── lib
-├── node_modules
-├── requirements
-│   └── frontend_instructions.md
-├── .eslintrc.json
-├── .gitignore
-├── components.json
-├── next-env.d.ts
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.js
-├── README.md
-├── tailwind.config.ts
-└── tsconfig.json

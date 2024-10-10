@@ -16,7 +16,7 @@ export default function LandingPage() {
             <Button size="lg" className="text-lg px-8 py-6">Get Started</Button>
           </Link>
           <Link href="/demos">
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">Watch Demo</Button>
+            <Button variant="outline" size="lg" className="text-lg px-8 py-6">Watch Demos</Button>
           </Link>
         </div>
       </section>
@@ -24,19 +24,19 @@ export default function LandingPage() {
       <section className="mb-16">
         <h2 className="text-4xl font-semibold mb-8 text-center text-primary">Key Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <Card className="bg-white/80 backdrop-blur-sm">
+        <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="flex items-center text-2xl">
                 <FileDigit className="mr-2 h-8 w-8 text-primary" />
-                Quick Digitization
+                Timely Digitization
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-lg">No 4 month lead time: have your records digitized as soon as you can scan them to yourself.</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardHeader>
+          <Card className="bg-card dark:bg-gray-800">
+          <CardHeader>
               <CardTitle className="flex items-center text-2xl">
                 <Database className="mr-2 h-8 w-8 text-primary" />
                 Efficient Storage
@@ -46,8 +46,8 @@ export default function LandingPage() {
               <p className="text-lg">No more jam-packed file rooms. Store all your records digitally and access them with ease.</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardHeader>
+          <Card className="bg-card dark:bg-gray-800">
+          <CardHeader>
               <CardTitle className="flex items-center text-2xl">
                 <Clock className="mr-2 h-8 w-8 text-primary" />
                 Time-Saving Assistant
@@ -63,7 +63,7 @@ export default function LandingPage() {
       <section className="mb-16">
         <h2 className="text-4xl font-semibold mb-8 text-center text-primary">Pricing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card className="bg-white/80 backdrop-blur-sm">
+        <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
               <CardTitle className="text-2xl">Option 1: Digitize</CardTitle>
             </CardHeader>
@@ -73,12 +73,12 @@ export default function LandingPage() {
               <Button className="mt-4 text-lg px-6 py-3" variant="outline">Choose Plan</Button>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardHeader>
+          <Card className="bg-card dark:bg-gray-800">
+          <CardHeader>
               <CardTitle className="text-2xl">Option 2: Reggie Assistant</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4 text-primary">$50/month</p>
+              <p className="text-4xl font-bold mb-4 text-primary">$40/month</p>
               <p className="text-lg">Includes Reggie assistant and digitization</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
             </CardContent>
