@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useTheme } from "next-themes"
 import { Moon, Sun } from "lucide-react"
-import { useState } from 'react'; // Add this import
+import { useAuth, UserButton } from "@clerk/nextjs";
 
 export default function Header() {
   const { setTheme, theme } = useTheme()
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulating login state
+  const { isSignedIn } = useAuth();
 
   return (
     <header className="bg-background shadow-md">
@@ -20,15 +20,15 @@ export default function Header() {
           <Link href="/about" className="text-foreground hover:text-primary">About</Link>
           <Link href="/demos" className="text-foreground hover:text-primary">Demos</Link>
           <Link href="/faq" className="text-foreground hover:text-primary">FAQ</Link>
-          {isLoggedIn ? (
+          {isSignedIn ? (
             <>
               <Link href="/dashboard" className="text-foreground hover:text-primary">Dashboard</Link>
-              <Button variant="outline" onClick={() => setIsLoggedIn(false)}>Logout</Button>
+              <UserButton afterSignOutUrl="/" />
             </>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="outline" onClick={() => setIsLoggedIn(true)}>Login</Button>
+                <Button variant="outline">Login</Button>
               </Link>
               <Link href="/signup">
                 <Button>Sign Up</Button>

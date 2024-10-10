@@ -1,22 +1,48 @@
 #Current File Structure
-
-REGGIE_FRONTEND
+# REGGIE_FRONTEND
 ├── .next
 ├── app
+│   ├── about
+│   │   └── page.tsx
+│   ├── dashboard
+│   │   └── page.tsx
+│   ├── demos
+│   │   └── page.tsx
+│   ├── faq
+│   │   └── page.tsx
+│   ├── login
+│   │   └── page.tsx
+│   ├── signup
+│   │   └── page.tsx
 │   ├── fonts
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components
-│   └── ui
-│       ├── button.tsx
-│       ├── card.tsx
-│       └── input.tsx
+│   ├── ui
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   └── input.tsx
+│   ├── AboutPage.tsx
+│   ├── Background.tsx
+│   ├── DashboardPage.tsx
+│   ├── DemosPage.tsx
+│   ├── FAQPage.tsx
+│   ├── Footer.tsx
+│   ├── Header.tsx
+│   ├── LandingPage.tsx
+│   ├── LoginPage.tsx
+│   ├── SignUpPage.tsx
+│   ├── theme-provider.tsx
+│   └── ThemeToggle.tsx
+├── hooks
 ├── lib
-├── node_modules
-├── requirements
-│   └── frontend_instructions.md
+├── project_info
+│   ├── core_functionalities.md
+│   ├── curr_file_structure.md
+│   ├── endpoints.md
+│   └── project_overview.md
 ├── .eslintrc.json
 ├── .gitignore
 ├── components.json
@@ -27,4 +53,5 @@ REGGIE_FRONTEND
 ├── postcss.config.js
 ├── README.md
 ├── tailwind.config.ts
-└── tsconfig.json
+├── tsconfig.json
+└── .env.local

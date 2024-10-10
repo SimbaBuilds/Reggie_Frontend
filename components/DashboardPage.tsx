@@ -11,8 +11,17 @@ import { Users, Mail, FileSpreadsheet, Info, Plus } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useAuth } from "@clerk/nextjs";
+import { redirect } from 'next/navigation';
 
 export default function DashboardPage() {
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
+
+  // If the user is not authenticated, redirect to the login page
+  if (isLoaded && !userId) {
+    redirect('/login');
+  }
+
   const [studentCsv, setStudentCsv] = useState<File | null>(null);
   const [staffCsv, setStaffCsv] = useState<File | null>(null);
   const [templateContent, setTemplateContent] = useState('');
