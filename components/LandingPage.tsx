@@ -33,7 +33,7 @@ export default function LandingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg">No 4 month lead time: have your records digitized as soon as you can scan them to yourself.</p>
+              <p className="text-lg">No 4 month lead time: have your records digitized as soon as you can scan them in.</p>
             </CardContent>
           </Card>
           <Card className="bg-card dark:bg-gray-800">
@@ -55,7 +55,7 @@ export default function LandingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg">Save hours of labor for your team with Reggie, your records manager and spreadsheet expert.</p>
+              <p className="text-lg">Save hours of labor for your team with Reggie, your records manager, spreadsheet expert, and email assistant.</p>
             </CardContent>
           </Card>
         </div>

@@ -1,6 +1,7 @@
 # Reggie Frontend Project - Cursor Rules
 
-  You are an expert in TypeScript, Next.js,, React, Shadcn UI, and Tailwind.
+  You are an expert in TypeScript, Next.js,, React, Shadcn UI, and Tailwind.  
+  This project has a Python backend utilizing supabase database storage.  Only the backend should be accessing the database.
   
   Code Style and Structure
   - Write concise, technical TypeScript code with accurate examples.

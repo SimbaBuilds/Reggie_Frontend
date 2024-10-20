@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,15 +12,54 @@ import { Users, Mail, FileSpreadsheet, Info, Plus, FileText } from 'lucide-react
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { useAuth } from "@clerk/nextjs";
-import { redirect } from 'next/navigation';
+
+// Define a type for the user data
+interface UserData {
+  name: string;
+  email: string;
+  // Add other properties as needed
+}
 
 export default function DashboardPage() {
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const router = useRouter();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // If the user is not authenticated, redirect to the login page
-  if (isLoaded && !userId) {
-    redirect('/login');
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/user/profile`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data.user);
+        } else {
+          throw new Error('Failed to fetch user data');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Optionally handle the error, e.g., show an error message
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a more sophisticated loading spinner
   }
 
   const [studentCsv, setStudentCsv] = useState<File | null>(null);
@@ -76,7 +116,7 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
+      <h1 className="text-4xl font-bold mb-8">Welcome, {userData?.name || 'User'}</h1>
       <Tabs defaultValue="digitize" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="digitize">Digitize Records</TabsTrigger>
@@ -294,7 +334,7 @@ export default function DashboardPage() {
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground mb-4">
               Upload a batch report of your current students' transcripts below. <br />
-                This will allow Reggie to add your students' transcripts to their respective records folder and fetch the transcript to draft records request fulfillments. <br />
+              This will allow Reggie to add your students' transcripts to their records folder and fetch the transcript during automated email drafts of records request fulfillments.  <br />
                 Students' first name, last name, and date of birth must be present on the first page of each transcript. <br />
                 Your SIS should have a transcript batch report tool. <br />
                 Upload as one large pdf with 1-2 students per page.

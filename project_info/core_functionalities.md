@@ -9,7 +9,10 @@ The public facing interface will include the following pages:
         3. "After digitization: save hours of labor for your team with Reggie, your records manager and spreadsheet expert -- see demos below.
     2. Video demos of digitization and Reggie in action 
     3. Note: only compatible with Google Workspace and GSuite at the moment.  You will need to create a school managed google account if you don't have one.
-    4. Pricing: Option 1 -- Digitize for $100.  Option 2 -- $50/mo. for Reggie assistant, digitization included.
+    4. Pricing: 
+        1. Option 1 -- Digitize for $100.  
+        2. Option 2 -- Reggie assistant for smaller organizations: $40/mo. For organizations with less than 500 people.  Includes Reggie assistant and digitization.
+        3. Option 3 -- Reggie assistant for larger organizations: $80/mo. For organizations with 500+ people.  Includes Reggie assistant and digitization.
     5. Login and sign up options
 
 2. About page: "This digitization process was designed by Cameron Higtower, a former school Registrar and IT professional with a software engineering background.  This digitization process and "Reggie" assistant is simply a public version of the AI tools and processes that Cameron used on the jo2.
@@ -42,5 +45,62 @@ The user portal aspect of the application will help the user navigate the follow
 3. Update the person roster via email to Reggie or via the application user interface.
 4. A space for users to upload their custom email templates 
 5. Users will optionally be allowed to and be shown how to create an email alias for Reggie -- otherwise their email assistant will have an @simbabuilds email.
-6. A dedicated page that shows how drive folders and records must be organized for Reggie records management to work 
-7. How-to content will be available for all of this.
+6. How-to content will be available for all of this.
+7. Registration Process:
+    1. Initial Registration:
+        1. User provides basic information: name, email, and password.
+        Selecting the sign up with google option will auto assign name, email, and password, but they will be prompted to complete the registration steps.
+        2. User enters or registers their organization -- selects their organization type (school, district, etc.) and size (small or large).
+    2. Plan Selection:
+    (If user has selected an organization that has already signed up for a plan, skip)
+    Based on the organization size, recommend an appropriate plan.
+    Explain the features of each plan, including the free tier limitations.
+    3. Google Account Integration:
+    User is prompted to connect their Google account for Drive and Gmail access.
+    Explain the necessary permissions and why they're required (file storage, email automation).
+    4. Data Upload:
+    (If user's organization has already uploaded a csv, skip')
+    User uploads a student list CSV (required) and an optional staff list CSV.
+    Implement the AI model to map headers, reducing the need for precise naming.
+    5. Google Drive Setup:
+    Backend creates the specified folder structure in the user's Google Drive.
+    Confirm successful creation and provide a brief overview of the structure.
+    Digitization Preferences:
+    6. User selects their preferred method for identifying persons in records:
+    a. "Consistent first page" option with a natural language description.
+    b. "Cover page" option using OCR.
+    If records are already digitized, offer the manual organization option.
+    7. Email Configuration:
+    Email labels created for them via the API. 
+    Digitization only customers only get the cumulative file label. 
+    Explain each label's purpose and how to use them.
+    8. Transcript Handling:
+    1. (Optional -- subscription service only)
+    2. "Upload a batch report of your current students' transcripts below.
+        This will allow Reggie to add your students' transcripts to their records folder and fetch the transcript during automated email drafts of records request fulfillments. 
+        Students' first name, last name, and date of birth must be present on the first page of each transcript.
+        Your SIS should have a transcript batch report tool. 
+        Upload as one large pdf with 1-2 students per page.
+        Note: This must be done once per semester."
+    9. Template Responses:
+        1. Skip for digitization only customers.
+        2. "These email templates can be related to anything: enrollment info, transcript requests, course catalogs, etc.."
+            E.g.
+            Subject: Transcript Request Confirmation
+            Dear [Student/Parent Name],
+            We have received your request for a transcript. Please allow [X] business days for processing. If you need further assistance, feel free to contact our office.
+            Best regards,
+            [Registrar’s Name]
+            High School Registrar
+        3. Allow the user to set up initial email templates (up to 8) or skip for later.
+    10. User Accounts:
+        (If user is not the primary user in organization, skip)
+        For paid plans, allow the primary user to invite up to 4 additional users (max 5 per organization).
+    11. Onboarding Tutorial:
+        (Differentiate based on plan)
+        Provide a brief interactive tutorial on how to use key features like email labels, Reggie interactions, and accessing digitized records.
+    12. All pages above should have a progress bar for this entire process 
+    13. Confirmation and Next Steps:
+        Summarize the setup process and provide clear next steps for getting started.
+        Offer resources for further assistance and support.
+    

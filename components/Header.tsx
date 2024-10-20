@@ -4,11 +4,40 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useTheme } from "next-themes"
 import { Moon, Sun } from "lucide-react"
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { setTheme, theme } = useTheme()
-  const { isSignedIn } = useAuth();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsSignedIn(!!token);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/auth/logout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('token');
+        setIsSignedIn(false);
+        router.push('/login');
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <header className="bg-background shadow-md">
@@ -23,7 +52,7 @@ export default function Header() {
           {isSignedIn ? (
             <>
               <Link href="/dashboard" className="text-foreground hover:text-primary">Dashboard</Link>
-              <UserButton afterSignOutUrl="/" />
+              <Button onClick={handleLogout}>Logout</Button>
             </>
           ) : (
             <>
