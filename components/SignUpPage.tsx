@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSignUpProcess } from '@/hooks/useSignUpProcess'
+import { useSignUpProcess } from 'hooks/useSignUpProcess'
 import { OrganizationDetailsForm } from './signup/OrganizationDetailsForm'
 import { PlanSelectionForm } from './signup/PlanSelectionForm'
 

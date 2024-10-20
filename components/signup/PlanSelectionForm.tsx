@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useSignUpProcess } from '@/hooks/useSignUpProcess'
+import { useSignUpProcess } from 'hooks/useSignUpProcess'
 
 const plans = {
   digitize: { name: 'digitize', price: 100, description: 'Digitize your records' },

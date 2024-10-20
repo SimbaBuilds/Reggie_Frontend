@@ -19,10 +19,18 @@ interface PlanData {
   price: number;
 }
 
+interface ExistingOrganization {
+  id: string;
+  name: string;
+  type: 'school' | 'district' | 'other';
+  size: 'small' | 'large';
+}
+
 export function useSignUpProcess() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [organizationData, setOrganizationData] = useState<OrganizationData | null>(null);
   const [planData, setPlanData] = useState<PlanData | null>(null);
+  const [existingOrganizations, setExistingOrganizations] = useState<ExistingOrganization[]>([]);
   const router = useRouter();
 
   const startSignUpProcess = async (data: UserData) => {
@@ -51,6 +59,65 @@ export function useSignUpProcess() {
     router.push('/dashboard'); // or wherever you want to redirect after signup
   };
 
+  const checkExistingOrganization = async (name: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations?name=${encodeURIComponent(name)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+        },
+      });
+      if (!response.ok) throw new Error('Failed to fetch organizations');
+      const data = await response.json();
+      setExistingOrganizations(data.data);
+      return data.data.length > 0;
+    } catch (error) {
+      console.error('Error checking existing organizations:', error);
+      return false;
+    }
+  };
+
+  const joinExistingOrganization = async (organizationId: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/join-organization`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+        },
+        body: JSON.stringify({ organization_id: organizationId }),
+      });
+      if (!response.ok) throw new Error('Failed to join organization');
+      const data = await response.json();
+      setOrganizationData(data.data);
+      router.push('/signup/google-integration');
+    } catch (error) {
+      console.error('Error joining organization:', error);
+      alert('Failed to join organization. Please try again.');
+    }
+  };
+
+  const createNewOrganization = async (organizationData: OrganizationData) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organization`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+        },
+        body: JSON.stringify(organizationData),
+      });
+      if (!response.ok) throw new Error('Failed to create organization');
+      const data = await response.json();
+      setOrganizationData(data.data);
+      router.push('/signup/plan-selection');
+    } catch (error) {
+      console.error('Error creating organization:', error);
+      alert('Failed to create organization. Please try again.');
+    }
+  };
+
   return { 
     startSignUpProcess,
     setOrganizationDetails,
@@ -58,6 +125,10 @@ export function useSignUpProcess() {
     userData,
     organizationData,
     planData,
-    completeSignUp 
+    completeSignUp,
+    checkExistingOrganization,
+    joinExistingOrganization,
+    existingOrganizations,
+    createNewOrganization,
   };
 }

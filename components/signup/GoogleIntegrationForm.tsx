@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { useSignUpProcess } from '@/hooks/useSignUpProcess'
+import { useSignUpProcess } from 'hooks/useSignUpProcess'
 
 export function GoogleIntegrationForm() {
   const { completeSignUp } = useSignUpProcess()
