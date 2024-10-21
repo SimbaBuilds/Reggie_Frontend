@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserData {
   email: string;
@@ -32,10 +33,17 @@ export function useSignUpProcess() {
   const [planData, setPlanData] = useState<PlanData | null>(null);
   const [existingOrganizations, setExistingOrganizations] = useState<ExistingOrganization[]>([]);
   const router = useRouter();
+  const { signup, getToken } = useAuth();
 
   const startSignUpProcess = async (data: UserData) => {
-    setUserData(data);
-    router.push('/signup/organization-details');
+    try {
+      await signup(data.email, data.password);
+      setUserData(data);
+      router.push('/signup/organization-details');
+    } catch (error) {
+      console.error('Signup failed:', error);
+      // Handle signup error (e.g., show error message to user)
+    }
   };
 
   const setOrganizationDetails = (data: OrganizationData) => {
@@ -61,11 +69,14 @@ export function useSignUpProcess() {
 
   const checkExistingOrganization = async (name: string) => {
     try {
+      const token = await getToken();
+      if (!token) throw new Error('No authentication token available');
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organizations?name=${encodeURIComponent(name)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
       if (!response.ok) throw new Error('Failed to fetch organizations');
@@ -80,11 +91,14 @@ export function useSignUpProcess() {
 
   const joinExistingOrganization = async (organizationId: string) => {
     try {
+      const token = await getToken();
+      if (!token) throw new Error('No authentication token available');
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/join-organization`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ organization_id: organizationId }),
       });
@@ -100,11 +114,14 @@ export function useSignUpProcess() {
 
   const createNewOrganization = async (organizationData: OrganizationData) => {
     try {
+      const token = await getToken();
+      if (!token) throw new Error('No authentication token available');
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/organization`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${/* Add logic to get the user's token */}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(organizationData),
       });

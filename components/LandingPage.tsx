@@ -55,7 +55,7 @@ export default function LandingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg">Save hours of labor for your team with Reggie, your records manager, spreadsheet expert, and email assistant.</p>
+              <p className="text-lg">Save 2-10 hours of labor per week for your team with Reggie, your records manager, spreadsheet expert, and email assistant.</p>
             </CardContent>
           </Card>
         </div>

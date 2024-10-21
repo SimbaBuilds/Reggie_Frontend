@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -18,8 +18,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorData.detail }, { status: response.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ message: 'Signup successful' });
   } catch (error) {
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
