@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSignUpProcess } from 'hooks/useSignUpProcess'
+import { useRegisterUser } from 'hooks/registration/useRegisterUser'
 
 interface InitialRegistrationFormProps {
   onGoogleSignUp: () => void;
@@ -23,11 +23,10 @@ export function InitialRegistrationForm({ onGoogleSignUp }: InitialRegistrationF
   const [confirmPassword, setConfirmPassword] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [emailAlias, setEmailAlias] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [signupError, setSignupError] = useState('')
   const router = useRouter()
-  const { startSignUpProcess } = useSignUpProcess()
+  const { handleSignUp} = useRegisterUser()
   const [passwordStrength, setPasswordStrength] = useState({
     length: false,
     numberOrSymbol: false,
@@ -42,7 +41,7 @@ export function InitialRegistrationForm({ onGoogleSignUp }: InitialRegistrationF
     })
   }, [password, confirmPassword])
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!passwordStrength.length || !passwordStrength.numberOrSymbol || !passwordStrength.match) {
       setPasswordError("Please ensure all password requirements are met")
@@ -52,31 +51,13 @@ export function InitialRegistrationForm({ onGoogleSignUp }: InitialRegistrationF
       const userData = {
         email,
         password,
-        first_name: firstName,
-        last_name: lastName,
-        email_alias: emailAlias || null
+        firstName,
+        lastName,
       }
       
-      const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/signup/user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Signup failed')
-      }
-
-      const data: UserResponse = await response.json()
-      console.log('Signup successful:', data.message)
+      await handleSignUp(userData)
       
-      // Start the sign-up process in your app's state management
-      await startSignUpProcess({ email, password, firstName, lastName });
-      
-      // Redirect to the next step (e.g., organization details or email verification)
+      // Redirect to the next step
       router.push('/signup/organization-details')
     } catch (error) {
       console.error('Error signing up:', error)
@@ -85,7 +66,7 @@ export function InitialRegistrationForm({ onGoogleSignUp }: InitialRegistrationF
   }
 
   return (
-    <form onSubmit={handleSignUp} className="bg-background shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form onSubmit={onSubmit} className="bg-background shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
           Email

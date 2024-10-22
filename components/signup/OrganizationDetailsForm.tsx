@@ -1,13 +1,13 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useSignUpProcess } from 'hooks/useSignUpProcess'
+import { useOrganizationRegistration } from 'hooks/registration/useRegisterOrg'
 
 export function OrganizationDetailsForm() {
   const [name, setName] = useState('')
   const [type, setType] = useState<'school' | 'district' | 'other'>('school')
   const [size, setSize] = useState<'small' | 'large'>('small')
-  const { checkExistingOrganization, joinExistingOrganization, existingOrganizations, createNewOrganization } = useSignUpProcess()
+  const { checkExistingOrganization, joinExistingOrganization, existingOrganizations, createNewOrganization } = useOrganizationRegistration()
   const [isChecking, setIsChecking] = useState(false)
   const [showExisting, setShowExisting] = useState(false)
 

@@ -34,7 +34,7 @@ export default function DashboardPage() {
       }
 
       try {
-        const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/user/profile`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/user/profile`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`

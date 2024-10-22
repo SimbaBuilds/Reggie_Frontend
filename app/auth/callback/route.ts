@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code')
 
   if (code) {
-    const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/auth/callback`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/callback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

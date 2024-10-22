@@ -20,7 +20,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/auth/logout`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/logout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useSignUpProcess } from 'hooks/useSignUpProcess'
+import { useOrganizationRegistration } from 'hooks/registration/useRegisterOrg'
 
 const plans = {
   digitize: { name: 'digitize', price: 100, description: 'Digitize your records' },
@@ -10,7 +10,8 @@ const plans = {
 }
 
 export function PlanSelectionForm() {
-  const { organizationData, setPlan } = useSignUpProcess()
+  const { organizationData, setPlan } = useOrganizationRegistration()
+
   const [selectedPlan, setSelectedPlan] = useState<'digitize' | 'small' | 'large'>('digitize')
 
   useEffect(() => {

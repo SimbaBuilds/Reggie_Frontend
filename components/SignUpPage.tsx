@@ -20,7 +20,7 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     try {
-      const response = await fetch(`${process.env.PYTHON_BACKEND_URL}/auth/google/signup`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/google/signup`, {
         method: 'GET',
       })
       
