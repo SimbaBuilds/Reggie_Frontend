@@ -60,25 +60,13 @@ export default function SignUpPage() {
     }
   }
 
-  const handleGoogleSignUp = () => {
-    // Implement Google sign-up logic here
-  };
-
   return (
     <div className="container mx-auto px-6 py-12 flex justify-center items-center min-h-screen">
       <div className="w-full max-w-md">
-        {step === 0 ? (
-          <InitialRegistrationForm
-            onSubmit={handleSubmit}
-            registrationState={registrationState}
-            onGoogleSignUp={handleGoogleSignUp}
-          />
-        ) : (
-          <CurrentStep
-            onSubmit={handleSubmit}
-            registrationState={registrationState}
-          />
-        )}
+        <CurrentStep
+          onSubmit={handleSubmit}
+          registrationState={registrationState}
+        />
       </div>
     </div>
   )

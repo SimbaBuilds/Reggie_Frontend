@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from 'hooks/use-toast';
+import { signIn } from 'next-auth/react';
 
 interface UserData {
   email: string;
@@ -87,6 +88,8 @@ export function useRegisterUser() {
       setIsLoading(false);
     }
   };
+
+
 
   return {
     handleSignUp,

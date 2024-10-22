@@ -63,6 +63,7 @@ export function useRegistrationFlow() {
     }
   };
 
+
   const handleOrganizationDetails = async (orgData: { name: string; type: 'school' | 'district' | 'other'; size: 'small' | 'large' }) => {
     try {
       await createNewOrganization(orgData);
