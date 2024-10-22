@@ -5,6 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useSignUpProcess } from 'hooks/useSignUpProcess'
 
 
-export function DriveSetupComponent() {
+export function OnboardingTutorialForm() {
   // Component for selecting digitization preferences
 }

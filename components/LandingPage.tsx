@@ -92,7 +92,7 @@ export default function LandingPage() {
               <CardTitle className="text-2xl">Option 3: Reggie Assistant for Larger Organizations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4 text-primary">$80/month</p>
+              <p className="text-4xl font-bold mb-4 text-primary">Click here for pricing details</p>
               <p className="text-lg">For organizations with 500+ people.</p>
               <p className="text-lg">Includes Reggie assistant and digitization.</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
