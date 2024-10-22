@@ -4,8 +4,9 @@ import { useToast } from 'hooks/use-toast';
 interface UserData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+  email_alias?: string;
 }
 
 interface UserResponse {
@@ -26,9 +27,13 @@ export function useRegisterUser() {
     setIsLoading(true);
     setError(null);
 
+    const signupUrl = `${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/api/registration/signup/user`;
+    console.log('Signup URL:', signupUrl);
+    console.log('Sending user data:', { ...userData, password: '[REDACTED]' }); // Log user data, but hide password
+
     try {
       // Register user
-      const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/signup/user`, {
+      const response = await fetch(signupUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,9 +41,12 @@ export function useRegisterUser() {
         body: JSON.stringify(userData),
       });
 
+      console.log('Response status:', response.status); // Log the response status
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Signup failed');
+        console.error('Error response:', errorData); // Log the error response
+        throw new Error(errorData.detail || `Signup failed with status ${response.status}`);
       }
 
       const data: UserResponse = await response.json();

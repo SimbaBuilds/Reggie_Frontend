@@ -40,7 +40,7 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
       return
     }
     try {
-      await handleInitialSignUp({ email, password, firstName, lastName })
+      await handleInitialSignUp({ email, password, first_name: firstName, last_name: lastName })
       // Remove the router.push line
     } catch (error) {
       console.error('Error signing up:', error)

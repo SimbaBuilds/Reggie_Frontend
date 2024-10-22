@@ -6,13 +6,21 @@ import { useOrganizationRegistration } from './useRegisterOrg';
 export interface RegistrationState {
   user: {
     email: string;
-    firstName: string;
-    lastName: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    email_alias?: string;
   };
   organization: {
     name: string;
     type: 'school' | 'district' | 'other';
     size: 'small' | 'large';
+    rosters_uploaded: boolean;
+    records_digitized: boolean;
+    records_organized: boolean;
+    transcripts_uploaded: boolean;
+    email_labels_created: boolean;
+    email_template_created: boolean;
   };
   plan: {
     name: 'digitize' | 'small' | 'large';
@@ -27,8 +35,8 @@ export interface RegistrationState {
 
 export function useRegistrationFlow() {
   const [registrationState, setRegistrationState] = useState<RegistrationState>({
-    user: { email: '', firstName: '', lastName: '' },
-    organization: { name: '', type: 'school', size: 'small' },
+    user: { email: '', password: '', first_name: '', last_name: '', email_alias: '' },
+    organization: { name: '', type: 'school', size: 'small', rosters_uploaded: false, records_digitized: false, records_organized: false, transcripts_uploaded: false, email_labels_created: false, email_template_created: false  },
     plan: { name: 'small', price: 40 },
     googleIntegration: false,
     dataUpload: false,
@@ -45,10 +53,10 @@ export function useRegistrationFlow() {
     setRegistrationState((prev) => ({ ...prev, ...update }));
   };
 
-  const handleInitialSignUp = async (userData: { email: string; password: string; firstName: string; lastName: string }) => {
+  const handleInitialSignUp = async (userData: { email: string; password: string; first_name: string; last_name: string }) => {
     try {
       await handleSignUp(userData);
-      updateRegistrationState({ user: { email: userData.email, firstName: userData.firstName, lastName: userData.lastName } });
+      updateRegistrationState({ user: { email: userData.email, password: userData.password, first_name: userData.first_name, last_name: userData.last_name } });
     } catch (error) {
       console.error('Error during initial sign up:', error);
       throw error;
@@ -58,7 +66,12 @@ export function useRegistrationFlow() {
   const handleOrganizationDetails = async (orgData: { name: string; type: 'school' | 'district' | 'other'; size: 'small' | 'large' }) => {
     try {
       await createNewOrganization(orgData);
-      updateRegistrationState({ organization: orgData });
+      updateRegistrationState({
+        organization: {
+          ...registrationState.organization,
+          ...orgData,
+        }
+      });
     } catch (error) {
       console.error('Error setting organization details:', error);
       throw error;

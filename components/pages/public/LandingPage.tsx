@@ -22,7 +22,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-4">
             <Link href="/try-reggie">
-              <Button variant="default" size="lg" className="text-lg px-8 py-6 bg-[#8FBC8F] hover:bg-[#7CAC7C] text-white">Try Reggie for Free</Button>
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6">Try Reggie for Free</Button>
             </Link>
             <p className="text-sm mt-2 text-muted-foreground">
               Free service includes drive file structure and limited Reggie email/spreadsheet assistant actions

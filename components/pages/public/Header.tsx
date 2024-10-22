@@ -21,6 +21,10 @@ export default function Header() {
     }
   };
 
+  const handleSignUp = () => {
+    router.push('/signup');
+  };
+
   return (
     <header className="bg-background shadow-md">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -41,9 +45,7 @@ export default function Header() {
               <Link href="/login">
                 <Button variant="outline">Login</Button>
               </Link>
-              <Link href="/signup">
-                <Button>Sign Up</Button>
-              </Link>
+              <Button onClick={handleSignUp}>Sign Up</Button>
             </>
           )}
           <Button
