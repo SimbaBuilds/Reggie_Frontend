@@ -5,30 +5,18 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/hooks/auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const router = useRouter()
+  const { login, initiateGoogleLogin } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Login failed')
-      }
-
-      const data = await response.json()
-      localStorage.setItem('token', data.token)
-      
+      await login(email, password)
       router.push('/dashboard')
     } catch (error) {
       console.error('Error logging in:', error)
@@ -38,16 +26,12 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/google`, {
-        method: 'GET',
-      })
-      
-      if (!response.ok) {
-        throw new Error('Google login failed')
+      const authUrl = await initiateGoogleLogin()
+      if (authUrl) {
+        window.location.href = authUrl
+      } else {
+        alert('Failed to initiate Google login')
       }
-
-      const data = await response.json()
-      window.location.href = data.authUrl
     } catch (error) {
       console.error('Error logging in with Google:', error)
       alert('Error logging in with Google')

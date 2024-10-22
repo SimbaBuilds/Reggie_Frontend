@@ -10,4 +10,5 @@ export interface AuthContextType {
   logout: () => Promise<void>
   isLoading: boolean
   getToken: () => Promise<string | null>
+  initiateGoogleLogin: () => Promise<string | null>
 }

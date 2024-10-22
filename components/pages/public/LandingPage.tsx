@@ -11,13 +11,23 @@ export default function LandingPage() {
       <section className="text-center mb-16">
         <h1 className="text-5xl font-bold mb-4 text-primary">Welcome to Reggie</h1>
         <p className="text-2xl mb-8 text-secondary-foreground">Streamline Your Education Admin Workflows</p>
-        <div className="flex justify-center space-x-4">
-          <Link href="/signup">
-            <Button size="lg" className="text-lg px-8 py-6">Get Started</Button>
-          </Link>
-          <Link href="/demos">
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6">Watch Demos</Button>
-          </Link>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="flex justify-center space-x-4">
+            <Link href="/signup">
+              <Button size="lg" className="text-lg px-8 py-6">Get Started</Button>
+            </Link>
+            <Link href="/demos">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6">Watch Demos</Button>
+            </Link>
+          </div>
+          <div className="mt-4">
+            <Link href="/try-reggie">
+              <Button variant="default" size="lg" className="text-lg px-8 py-6 bg-[#8FBC8F] hover:bg-[#7CAC7C] text-white">Try Reggie for Free</Button>
+            </Link>
+            <p className="text-sm mt-2 text-muted-foreground">
+              Free service includes drive file structure and limited Reggie email/spreadsheet assistant actions
+            </p>
+          </div>
         </div>
       </section>   
 
@@ -55,7 +65,7 @@ export default function LandingPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg">Save 2-10 hours of labor per week for your team with Reggie, your records manager, spreadsheet expert, and email assistant.</p>
+              <p className="text-lg">Save hours of labor per week for your team with Reggie, your records manager, spreadsheet expert, and email assistant.</p>
             </CardContent>
           </Card>
         </div>
@@ -68,33 +78,34 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-2xl">Option 1: Digitize</CardTitle>
+              <CardTitle className="text-2xl">Digitization for Smaller Organizations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4 text-primary">$100</p>
+              <p className="text-2xl font-bold mb-4 text-primary">$100</p>
               <p className="text-lg">One-time fee for digitization service.</p>
+              <p className="text-lg">For organizations with less than 1000 people (staff and students).</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Option</Button>
             </CardContent>
           </Card>
           <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-2xl">Option 2: Reggie Assistant for Smaller Organizations</CardTitle>
+              <CardTitle className="text-2xl">Reggie Assistant for Smaller Organizations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4 text-primary">$40/month</p>
-              <p className="text-lg">For organizations with less than 500 people.</p>
+              <p className="text-2xl font-bold mb-4 text-primary">$40/month</p>
               <p className="text-lg">Includes Reggie assistant and digitization.</p>
+              <p className="text-lg">For organizations with less than 1000 people (staff and students).</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
             </CardContent>
           </Card>
           <Card className="bg-card dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-2xl">Option 3: Reggie Assistant for Larger Organizations</CardTitle>
+              <CardTitle className="text-2xl">Digitization and Reggie Assistant for Larger Organizations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold mb-4 text-primary">Click here for pricing details</p>
-              <p className="text-lg">For organizations with 500+ people.</p>
-              <p className="text-lg">Includes Reggie assistant and digitization.</p>
+              <p className="text-2xl font-bold mb-4 text-primary">Pricing Varies</p>
+              <p className="text-lg">For organizations with 1000+ people.</p>
+              <p className="text-lg">See pricing <Link href="/pricing-details" className="underline text-primary hover:text-primary/80">details</Link>.</p>
               <Button className="mt-4 text-lg px-6 py-3">Choose Plan</Button>
             </CardContent>
           </Card>
@@ -103,15 +114,6 @@ export default function LandingPage() {
 
 
 
-
-
-      <section className="text-center">
-        <h2 className="text-4xl font-semibold mb-4 text-primary">Ready to Get Started?</h2>
-        <p className="text-xl mb-8">Transform your administrative workflows today with Reggie.</p>
-        <Link href="/signup">
-          <Button size="lg" className="text-lg px-8 py-6">Sign Up Now</Button>
-        </Link>
-      </section>
     </div>
   );
 }

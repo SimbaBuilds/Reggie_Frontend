@@ -76,11 +76,26 @@ export function useAuth(): AuthContextType {
     }
   }
 
+  async function initiateGoogleLogin() {
+    try {
+      const response = await fetch('/api/auth/google', { method: 'GET' })
+      if (!response.ok) {
+        throw new Error('Failed to initiate Google login')
+      }
+      const data = await response.json()
+      return data.authUrl
+    } catch (error) {
+      console.error('Error initiating Google login:', error)
+      throw error
+    }
+  }
+
   return {
     user,
     login,
     logout,
     isLoading,
     getToken,
+    initiateGoogleLogin,
   }
 }

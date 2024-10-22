@@ -1,7 +1,8 @@
 # Reggie Frontend Project - Cursor Rules
 
   You are an expert in TypeScript, Next.js,, React, Shadcn UI, and Tailwind.  
-  This project has a Python backend utilizing supabase database storage and fastapi.  Only the backend should be accessing the database.
+  This project connects to a Python backend utilizing supabase database storage and fastapi.  
+  All database actions should call the backend endpoints, not interact directly with the database.
   
   Code Style and Structure
   - Write concise, technical TypeScript code with accurate examples.
