@@ -1,19 +1,23 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-  const { email, password } = await request.json();
-  const supabase = createRouteHandlerClient({ cookies });
+  try {
+    const { email, password } = await request.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include',
+    });
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    if (!response.ok) {
+      const errorData = await response.json();
+      return NextResponse.json({ error: errorData.detail }, { status: response.status });
+    }
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    const userData = await response.json();
+    return NextResponse.json(userData);
+  } catch (error) {
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
-
-  return NextResponse.json({ user: data.user, session: data.session });
 }

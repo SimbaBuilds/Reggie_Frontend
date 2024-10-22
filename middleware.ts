@@ -3,11 +3,10 @@ import type { NextRequest } from 'next/server'
 
 
 
-export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth_token')?.value
+export function middleware(request: NextRequest) {
+  const authToken = request.cookies.get('authToken')?.value
 
-  // Redirect unauthenticated users to login page for protected routes
-  if (!token && request.nextUrl.pathname.startsWith('/protected')) {
+  if (!authToken && request.nextUrl.pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -15,8 +14,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    '/protected/:path*'
-  ],
+  matcher: '/dashboard/:path*',
 };
