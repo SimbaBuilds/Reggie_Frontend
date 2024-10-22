@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/auth';
 import { useRegisterUser } from './useRegisterUser';
 import { useOrganizationRegistration } from './useRegisterOrg';
+import { useRouter } from 'next/navigation';
 
 export interface RegistrationState {
   user: {
@@ -46,8 +47,9 @@ export function useRegistrationFlow() {
   });
 
   const { getToken } = useAuth();
-  const { handleSignUp } = useRegisterUser();
+  const { handleSignUp, handleGoogleSignUp: registerGoogleUser } = useRegisterUser();
   const { createNewOrganization, setPlan } = useOrganizationRegistration();
+  const router = useRouter();
 
   const updateRegistrationState = (update: Partial<RegistrationState>) => {
     setRegistrationState((prev) => ({ ...prev, ...update }));
@@ -130,6 +132,24 @@ export function useRegistrationFlow() {
     }
   };
 
+  const handleGoogleSignUp = async () => {
+    try {
+      const userData = await registerGoogleUser();
+      updateRegistrationState({ 
+        user: { 
+          email: userData.email, 
+          password: '', // Google sign-up doesn't use a password
+          first_name: userData.first_name, 
+          last_name: userData.last_name 
+        } 
+      });
+      // The redirection is now handled by the callbackUrl in signIn
+    } catch (error) {
+      console.error('Error during Google sign up:', error);
+      throw error;
+    }
+  };
+
   return {
     registrationState,
     handleInitialSignUp,
@@ -141,5 +161,6 @@ export function useRegistrationFlow() {
     handleEmailConfiguration,
     handleUserAccounts,
     finalizeRegistration,
+    handleGoogleSignUp,
   };
 }

@@ -10,7 +10,7 @@ import { DataUploadForm } from './registration/DataUploadForm'
 import { TranscriptHandlingForm } from './registration/TranscriptHandlingForm'
 import { EmailConfigurationForm } from './registration/EmailConfigurationForm'
 import { UserAccountsForm } from './registration/UserAccountsForm'
-
+import { useRouter } from 'next/navigation';
 
 // Update the StepComponent type
 type BaseStepProps = {
@@ -43,9 +43,11 @@ const STEPS: Array<{
 export default function SignUpPage() {
   const [step, setStep] = useState(0)
   const registrationHook = useRegistrationFlow()
+  const router = useRouter();
   const {
     registrationState,
-    finalizeRegistration
+    finalizeRegistration,
+    handleGoogleSignUp
   } = registrationHook
 
   const CurrentStep = STEPS[step].component
@@ -60,12 +62,23 @@ export default function SignUpPage() {
     }
   }
 
+  const handleGoogleSignUpClick = async () => {
+    try {
+      await handleGoogleSignUp();
+      router.push('/registration/organization-details');
+    } catch (error) {
+      console.error('Error signing up with Google:', error);
+      // Handle error (e.g., show error message)
+    }
+  };
+
   return (
     <div className="container mx-auto px-6 py-12 flex justify-center items-center min-h-screen">
       <div className="w-full max-w-md">
         <CurrentStep
           onSubmit={handleSubmit}
           registrationState={registrationState}
+          {...(step === 0 ? { onGoogleSignUp: handleGoogleSignUpClick } : {})}
         />
       </div>
     </div>

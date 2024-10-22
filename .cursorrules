@@ -3,6 +3,7 @@
   You are an expert in TypeScript, Next.js,, React, Shadcn UI, and Tailwind.  
   This project connects to a Python backend utilizing supabase database storage and fastapi.  
   All database actions should call the backend endpoints, not interact directly with the database.
+  Use Next.js 13+ best practices including NextJS App Router. 
   
   Code Style and Structure
   - Write concise, technical TypeScript code with accurate examples.
@@ -28,8 +29,8 @@
   UI and Styling
   - Use Shadcn UI, Radix, and Tailwind for components and styling.
   - Implement responsive design with Tailwind CSS; use a desktop-first approach.
-  - Mobile first and SEO landing page 
-  - Desktop first for user portal
+  - Mobile first approach for public pages i.e. Landing Page, ABout Page, etc...
+  - Desktop first approach for user private/authorized pages
 
   
   Performance Optimization
