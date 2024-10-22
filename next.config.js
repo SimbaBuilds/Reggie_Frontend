@@ -10,6 +10,19 @@ const nextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com'],
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Set-Cookie',
+            value: 'SameSite=Lax; Secure',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 module.exports = nextConfig

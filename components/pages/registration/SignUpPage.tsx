@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { useRegistrationFlow, RegistrationState } from 'hooks/registration/useRegistrationFlow'
-import { InitialRegistrationForm } from './registration/InitialRegistrationForm'
-import { OrganizationDetailsForm } from './registration/OrganizationDetailsForm'
-import { PlanSelectionForm } from './registration/PlanSelectionForm'
-import { GoogleIntegrationForm } from './registration/GoogleIntegrationForm'
-import { DataUploadForm } from './registration/DataUploadForm'
-import { TranscriptHandlingForm } from './registration/TranscriptHandlingForm'
-import { EmailConfigurationForm } from './registration/EmailConfigurationForm'
-import { UserAccountsForm } from './registration/UserAccountsForm'
+import { InitialRegistrationForm } from './InitialRegistrationForm'
+import { OrganizationDetailsForm } from './OrganizationDetailsForm'
+import { PlanSelectionForm } from './PlanSelectionForm'
+import { GoogleIntegrationForm } from './GoogleIntegrationForm'
+import { DataUploadForm } from './DataUploadForm'
+import { TranscriptHandlingForm } from './TranscriptHandlingForm'
+import { EmailConfigurationForm } from './EmailConfigurationForm'
+import { UserAccountsForm } from './UserAccountsForm'
 import { useRouter } from 'next/navigation';
 
 // Update the StepComponent type
@@ -62,23 +62,12 @@ export default function SignUpPage() {
     }
   }
 
-  const handleGoogleSignUpClick = async () => {
-    try {
-      await handleGoogleSignUp();
-      router.push('/registration/organization-details');
-    } catch (error) {
-      console.error('Error signing up with Google:', error);
-      // Handle error (e.g., show error message)
-    }
-  };
-
   return (
     <div className="container mx-auto px-6 py-12 flex justify-center items-center min-h-screen">
       <div className="w-full max-w-md">
         <CurrentStep
           onSubmit={handleSubmit}
           registrationState={registrationState}
-          {...(step === 0 ? { onGoogleSignUp: handleGoogleSignUpClick } : {})}
         />
       </div>
     </div>

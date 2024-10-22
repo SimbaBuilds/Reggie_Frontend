@@ -1,35 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
 export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url)
-  const code = requestUrl.searchParams.get('code')
+  console.log('Callback route hit');
+  const token = await getToken({ req: request as any });
 
-  if (code) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/auth/callback`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code }),
-    })
+  console.log('Token received:', token);
 
-    if (response.ok) {
-      const data = await response.json()
-      const res = NextResponse.redirect(new URL('/', request.url))
-      
-      // Set the auth token as a cookie
-      res.cookies.set('auth_token', data.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 60 * 60 * 24 * 7, // 1 week
-        path: '/',
-      })
+  if (token) {
+    console.log('Attempting to register user with backend');
+    try {
+      const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/api/registration/signup/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: token.email,
+          first_name: token.name?.split(' ')[0] || '',
+          last_name: token.name?.split(' ').slice(1).join(' ') || '',
+          google_id: token.sub,
+        }),
+      });
 
-      return res
+      console.log('Backend response status:', backendResponse.status);
+
+      if (backendResponse.ok) {
+        console.log('Registration successful, redirecting to organization details');
+        return NextResponse.redirect(new URL('/registration/organization-details', request.url));
+      } else {
+        const errorData = await backendResponse.json();
+        console.error('Registration failed', backendResponse.status, JSON.stringify(errorData, null, 2));
+        return NextResponse.redirect(new URL(`/auth/error?error=RegistrationFailed&details=${encodeURIComponent(JSON.stringify(errorData))}`, request.url));
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      return NextResponse.redirect(new URL('/auth/error?error=RegistrationFailed&details=UnexpectedError', request.url));
     }
   }
 
-  // If there's no code or the authentication failed, redirect to an error page
-  return NextResponse.redirect(new URL('/auth/error', request.url))
+  console.log('No token found, redirecting to error page');
+  return NextResponse.redirect(new URL('/auth/error?error=AuthenticationFailed', request.url));
 }

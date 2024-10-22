@@ -5,6 +5,7 @@ import { useRegistrationFlow } from 'hooks/registration/useRegistrationFlow'
 import { RegistrationState } from '@/hooks/registration/useRegistrationFlow';
 import { useRegisterUser} from '@/hooks/registration/useRegisterUser';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 interface InitialRegistrationFormProps {
   onSubmit: (data: any) => Promise<void>;
@@ -54,7 +55,21 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
 
   const handleGoogleSignUpClick = async () => {
     try {
-      await onGoogleSignUp();
+      console.log('Initiating Google Sign-In');
+      const result = await signIn('google', { 
+        redirect: false,
+        callbackUrl: `${window.location.origin}/auth/callback`
+      });
+      
+      console.log('Google Sign-In result:', result);
+      
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      if (result?.ok) {
+        console.log('Google Sign-In successful, redirecting...');
+      }
     } catch (error) {
       console.error('Error signing up with Google:', error);
       setSignupError(error instanceof Error ? error.message : 'An error occurred during Google signup');
