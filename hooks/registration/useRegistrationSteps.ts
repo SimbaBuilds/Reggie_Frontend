@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { RegistrationState } from './useRegistrationFlow'
-
+import { SubscriptionType } from '../../types/db_models'
 
 interface RegistrationStep {
   key: string;
@@ -12,12 +12,12 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
   {
     key: 'initialSignUp',
     label: 'Initial Sign Up',
-    isCompleted: (state) => !!state.user.email,
+    isCompleted: (state) => !!state.user.email && !!state.user.password && !!state.user.first_name && !!state.user.last_name,
   },
   {
     key: 'organizationDetails',
     label: 'Organization Details',
-    isCompleted: (state) => !!state.organization.name,
+    isCompleted: (state) => !!state.organization.name && !!state.organization.type && !!state.organization.size,
   },
   {
     key: 'planSelection',
@@ -32,22 +32,42 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
   {
     key: 'dataUpload',
     label: 'Data Upload',
-    isCompleted: (state) => state.dataUpload,
+    isCompleted: (state) => state.dataUpload.studentList && (state.dataUpload.staffList || !state.organization.size),
   },
   {
-    key: 'transcriptHandling',
-    label: 'Transcript Handling',
-    isCompleted: (state) => state.transcriptHandling,
+    key: 'googleDriveSetup',
+    label: 'Google Drive Setup',
+    isCompleted: (state) => state.googleDriveSetup,
+  },
+  {
+    key: 'digitizationPreferences',
+    label: 'Digitization Preferences',
+    isCompleted: (state) => !!state.digitizationMethod,
   },
   {
     key: 'emailConfiguration',
     label: 'Email Configuration',
-    isCompleted: (state) => state.emailConfiguration,
+    isCompleted: (state) => state.emailConfiguration && state.organization.email_labels_created,
+  },
+  {
+    key: 'transcriptHandling',
+    label: 'Transcript Handling',
+    isCompleted: (state) => state.transcriptHandling || state.plan.name === SubscriptionType.Free,
+  },
+  {
+    key: 'templateResponses',
+    label: 'Template Responses',
+    isCompleted: (state) => state.templateResponses.length > 0 || state.plan.name === SubscriptionType.Free,
   },
   {
     key: 'userAccounts',
     label: 'User Accounts',
-    isCompleted: (state) => state.userAccounts.length > 0,
+    isCompleted: (state) => state.userAccounts.length > 0 || !state.isOrganizationPrimaryUser,
+  },
+  {
+    key: 'onboardingTutorial',
+    label: 'Onboarding Tutorial',
+    isCompleted: (state) => state.onboardingTutorialCompleted,
   },
 ];
 
@@ -85,5 +105,6 @@ export function useRegistrationSteps(registrationState: RegistrationState) {
     REGISTRATION_STEPS,
   };
 }
+
 
 

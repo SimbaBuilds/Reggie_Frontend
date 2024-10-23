@@ -21,10 +21,18 @@ export interface RegistrationState {
   };
   plan: PlanData;
   googleIntegration: boolean;
-  dataUpload: boolean;
+  dataUpload: {
+    studentList: boolean;
+    staffList: boolean;
+  };
+  googleDriveSetup: boolean;
+  digitizationMethod: 'consistentFirstPage' | 'coverPage' | 'manualOrganization' | null;
   transcriptHandling: boolean;
   emailConfiguration: boolean;
+  templateResponses: string[];
   userAccounts: string[];
+  isOrganizationPrimaryUser: boolean;
+  onboardingTutorialCompleted: boolean;
 }
 
 export function useRegistrationFlow() {
@@ -43,17 +51,32 @@ export function useRegistrationFlow() {
     },
     plan: { name: SubscriptionType.Free, price: 0 },
     googleIntegration: false,
-    dataUpload: false,
+    dataUpload: {
+      studentList: false,
+      staffList: false,
+    },
+    googleDriveSetup: false,
+    digitizationMethod: null,
     transcriptHandling: false,
     emailConfiguration: false,
+    templateResponses: [],
     userAccounts: [],
+    isOrganizationPrimaryUser: false,
+    onboardingTutorialCompleted: false,
   });
 
   const { getToken } = useAuth();
   const { handleSignUp, handleGoogleSignUpClick } = useInitialRegistration();
   const { createNewOrganization, joinExistingOrganization, setPlan, checkExistingOrganization } = useOrganizationRegistration();
   const router = useRouter();
-  const { REGISTRATION_STEPS, currentStep, isLastStep, goToNextStep, goToPreviousStep } = useRegistrationSteps(registrationState);
+  const {
+    REGISTRATION_STEPS,
+    currentStep,
+    isLastStep,
+    goToNextStep,
+    goToPreviousStep,
+    calculateProgress,
+  } = useRegistrationSteps(registrationState);
 
   const updateRegistrationState = (update: Partial<RegistrationState>) => {
     setRegistrationState((prev) => ({ ...prev, ...update }));
@@ -110,7 +133,7 @@ export function useRegistrationFlow() {
     updateRegistrationState({ googleIntegration: integrated });
   };
 
-  const handleDataUpload = (uploaded: boolean) => {
+  const handleDataUpload = (uploaded: { studentList: boolean; staffList: boolean }) => {
     updateRegistrationState({ dataUpload: uploaded });
   };
 
@@ -147,14 +170,6 @@ export function useRegistrationFlow() {
     }
   };
 
-
-  const calculateProgress = () => {
-    const completedSteps = REGISTRATION_STEPS.filter((step) =>
-      step.isCompleted(registrationState)
-    ).length;
-    return Math.round((completedSteps / REGISTRATION_STEPS.length) * 100);
-  };
-
   const handleStepSubmit = async (data: any) => {
     switch (currentStep.key) {
       case 'initialSignUp':
@@ -163,9 +178,56 @@ export function useRegistrationFlow() {
       case 'organizationDetails':
         await handleOrganizationDetails(data);
         break;
-      // ... other cases
+      case 'planSelection':
+        await handlePlanSelection(data);
+        break;
+      case 'googleIntegration':
+        handleGoogleIntegration(data);
+        break;
+      case 'dataUpload':
+        handleDataUpload(data);
+        break;
+      case 'googleDriveSetup':
+        handleGoogleDriveSetup(data);
+        break;
+      case 'digitizationPreferences':
+        handleDigitizationPreferences(data);
+        break;
+      case 'emailConfiguration':
+        handleEmailConfiguration(data);
+        break;
+      case 'transcriptHandling':
+        handleTranscriptHandling(data);
+        break;
+      case 'templateResponses':
+        handleTemplateResponses(data);
+        break;
+      case 'userAccounts':
+        handleUserAccounts(data);
+        break;
+      case 'onboardingTutorial':
+        handleOnboardingTutorial(data);
+        break;
+      default:
+        console.error('Unknown step:', currentStep.key);
     }
     goToNextStep();
+  };
+
+  const handleGoogleDriveSetup = (setup: boolean) => {
+    updateRegistrationState({ googleDriveSetup: setup });
+  };
+
+  const handleDigitizationPreferences = (method: 'consistentFirstPage' | 'coverPage' | 'manualOrganization') => {
+    updateRegistrationState({ digitizationMethod: method });
+  };
+
+  const handleTemplateResponses = (templates: string[]) => {
+    updateRegistrationState({ templateResponses: templates });
+  };
+
+  const handleOnboardingTutorial = (completed: boolean) => {
+    updateRegistrationState({ onboardingTutorialCompleted: completed });
   };
 
   return {
@@ -175,6 +237,7 @@ export function useRegistrationFlow() {
     handleStepSubmit,
     goToPreviousStep,
     calculateProgress,
+    finalizeRegistration,
     handleInitialSignUp,
     handleOrganizationDetails,
     handleJoinExistingOrganization,
@@ -184,8 +247,11 @@ export function useRegistrationFlow() {
     handleTranscriptHandling,
     handleEmailConfiguration,
     handleUserAccounts,
-    finalizeRegistration,
     handleGoogleSignUpClick,
     checkExistingOrganization,
+    handleGoogleDriveSetup,
+    handleDigitizationPreferences,
+    handleTemplateResponses,
+    handleOnboardingTutorial,
   };
 }

@@ -10,18 +10,27 @@ import { DataUploadForm } from './forms/DataUploadForm'
 import { TranscriptHandlingForm } from './forms/TranscriptHandlingForm'
 import { EmailConfigurationForm } from './forms/EmailConfigurationForm'
 import { UserAccountsForm } from './forms/UserAccountsForm'
+import { DriveSetupForm } from './forms/DriveSetupForm'
+import { DigitizationPreferencesForm } from './forms/DigitizationPreferencesForm'
+import { TemplateResponsesForm } from './forms/EmailTemplatesForm'
+import { OnboardingTutorialForm } from './forms/OnboardingTutorialForm'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { ComponentType } from 'react'
 
-const STEP_COMPONENTS = {
+const STEP_COMPONENTS: Record<string, ComponentType<StepProps>> = {
   initialSignUp: InitialRegistrationForm,
   organizationDetails: OrganizationDetailsForm,
   planSelection: PlanSelectionForm,
   googleIntegration: GoogleIntegrationForm,
   dataUpload: DataUploadForm,
-  transcriptHandling: TranscriptHandlingForm,
+  driveSetup: DriveSetupForm,
+  digitizationPreferences: DigitizationPreferencesForm,
   emailConfiguration: EmailConfigurationForm,
+  transcriptHandling: TranscriptHandlingForm,
+  templateResponses: TemplateResponsesForm,
   userAccounts: UserAccountsForm,
+  onboardingTutorial: OnboardingTutorialForm,
 } as const;
 
 export interface StepProps {
@@ -41,7 +50,7 @@ export function RegistrationPage() {
     finalizeRegistration,
   } = useRegistrationFlow();
 
-  const StepComponent = STEP_COMPONENTS[currentStep.key as keyof typeof STEP_COMPONENTS];
+  const StepComponent = STEP_COMPONENTS[currentStep.key as keyof typeof STEP_COMPONENTS] as ComponentType<StepProps>;
 
   const handleSubmit = async (data: any) => {
     await handleStepSubmit(data);

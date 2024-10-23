@@ -69,16 +69,16 @@ The user portal aspect of the application will help the user navigate the follow
     Confirm successful creation and provide a brief overview of the structure.
     Digitization Preferences:
     6. User selects their preferred method for identifying persons in records:
-    a. "Consistent first page" option with a natural language description.
-    b. "Cover page" option using OCR.
-    If records are already digitized, offer the manual organization option.
+        1. "Consistent first page" option with a natural language description.
+        2. "Cover page" option using OCR.
+        3. If records are already digitized, offer the manual organization option.
     7. Email Configuration:
     Email labels created for them via the API. 
     Digitization only customers only get the cumulative file label. 
     Explain each label's purpose and how to use them.
     8. Transcript Handling:
-    1. (Optional -- subscription service only)
-    2. "Upload a batch report of your current students' transcripts below.
+        1. (Optional -- subscription service only)
+        2. "Upload a batch report of your current students' transcripts below.
         This will allow Reggie to add your students' transcripts to their records folder and fetch the transcript during automated email drafts of records request fulfillments. 
         Students' first name, last name, and date of birth must be present on the first page of each transcript.
         Your SIS should have a transcript batch report tool. 
@@ -101,8 +101,7 @@ The user portal aspect of the application will help the user navigate the follow
     11. Onboarding Tutorial:
         (Differentiate based on plan)
         Provide a brief interactive tutorial on how to use key features like email labels, Reggie interactions, and accessing digitized records.
-    12. All pages above should have a progress bar for this entire process 
-    13. Confirmation and Next Steps:
+    12. Confirmation and Next Steps:
         Summarize the setup process and provide clear next steps for getting started.
         Offer resources for further assistance and support.
     
