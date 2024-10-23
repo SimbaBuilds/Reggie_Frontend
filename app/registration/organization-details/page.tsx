@@ -1,6 +1,6 @@
 "use client"
 
-import { OrganizationDetailsFormWrapper } from '@/components/pages/registration/OrganizationDetailsFormWrapper'
+import { OrganizationDetailsFormWrapper } from '@/components/pages/registration/wrappers/OrganizationDetailsFormWrapper'
 
 export default function OrganizationDetailsPage() {
   return (

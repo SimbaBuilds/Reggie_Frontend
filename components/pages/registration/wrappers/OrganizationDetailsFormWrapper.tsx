@@ -1,7 +1,7 @@
 "use client"
 
 import { useRegistrationFlow } from '@/hooks/registration/useRegistrationFlow'
-import { OrganizationDetailsForm } from './OrganizationDetailsForm'
+import { OrganizationDetailsForm } from '../OrganizationDetailsForm'
 import { useState } from 'react'
 import { ExistingOrganizationSelector } from '@/components/pages/registration/ExistingOrganizationSelector'
 import { useRouter } from 'next/navigation'
