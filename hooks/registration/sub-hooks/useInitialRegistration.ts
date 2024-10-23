@@ -76,36 +76,31 @@ export function useInitialRegistration() {
 
   const handleGoogleSignUpClick = async () => {
     try {
-      console.log('Initiating Google Sign-In')
+      console.log('Initiating Google Sign-In');
       const result = await signIn('google', { 
         redirect: false,
-        callbackUrl: `${window.location.origin}/auth/callback`
-      })
+        callbackUrl: `${window.location.origin}/api/google-auth/callback/signup`
+      });
       
-      console.log('Google Sign-In result:', result)
+      console.log('Google Sign-In result:', result);
       
       if (result?.error) {
-        throw new Error(result.error)
+        throw new Error(result.error);
       }
 
       if (result?.ok) {
-        console.log('Google Sign-In successful, proceeding with registration')
-        // Note: handleGoogleSignUp is removed as it's now handled in the callback
-        toast({
-          title: "Google Sign Up Initiated",
-          description: "Please complete the registration process.",
-          duration: 5000,
-        })
+        console.log('Google Sign-In successful, redirecting to callback');
+        window.location.href = result.url || '/api/google-auth/callback/signup';
       }
     } catch (error) {
-      console.error('Error signing up with Google:', error)
-      setSignupError(error instanceof Error ? error.message : 'An error occurred during Google signup')
+      console.error('Error signing up with Google:', error);
+      setSignupError(error instanceof Error ? error.message : 'An error occurred during Google signup');
       toast({
         title: "Google Sign Up Failed",
         description: error instanceof Error ? error.message : 'An error occurred during Google signup',
         variant: "destructive",
         duration: 5000,
-      })
+      });
     }
   }
 

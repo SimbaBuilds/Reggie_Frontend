@@ -24,7 +24,7 @@ export interface RegistrationState {
   onboardingTutorialCompleted: boolean;
 }
 
-export function useRegistrationFlow() {
+export function useRegistrationFlow(initialStep?: string | null) {
   const [registrationState, setRegistrationState] = useState<RegistrationState>(() => ({
     user: { email: '', password: '', first_name: '', last_name: '', email_alias: '' },
     organization: {
@@ -69,7 +69,8 @@ export function useRegistrationFlow() {
     goToNextStep,
     goToPreviousStep,
     calculateProgress,
-  } = useRegistrationSteps(registrationState);
+    setCurrentStepByKey,
+  } = useRegistrationSteps(registrationState, initialStep);
 
   const updateRegistrationState = useCallback((update: Partial<RegistrationState>) => {
     setRegistrationState(prev => ({ ...prev, ...update }));
@@ -229,5 +230,6 @@ export function useRegistrationFlow() {
     handleDigitizationPreferences,
     handleTemplateResponses,
     handleOnboardingTutorial,
+    setCurrentStepByKey,
   };
 }

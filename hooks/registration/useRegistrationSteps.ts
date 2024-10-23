@@ -71,8 +71,14 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
   },
 ];
 
-export function useRegistrationSteps(registrationState: RegistrationState) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+export function useRegistrationSteps(registrationState: RegistrationState, initialStep?: string | null) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(() => {
+    if (initialStep) {
+      const index = REGISTRATION_STEPS.findIndex(step => step.key === initialStep);
+      return index !== -1 ? index : 0;
+    }
+    return 0;
+  });
 
   const currentStep = REGISTRATION_STEPS[currentStepIndex];
   const isLastStep = currentStepIndex === REGISTRATION_STEPS.length - 1;
@@ -96,6 +102,13 @@ export function useRegistrationSteps(registrationState: RegistrationState) {
     return Math.round((completedSteps / REGISTRATION_STEPS.length) * 100);
   };
 
+  const setCurrentStepByKey = (stepKey: string) => {
+    const index = REGISTRATION_STEPS.findIndex(step => step.key === stepKey);
+    if (index !== -1) {
+      setCurrentStepIndex(index);
+    }
+  };
+
   return {
     currentStep,
     isLastStep,
@@ -103,6 +116,7 @@ export function useRegistrationSteps(registrationState: RegistrationState) {
     goToPreviousStep,
     calculateProgress,
     REGISTRATION_STEPS,
+    setCurrentStepByKey,
   };
 }
 

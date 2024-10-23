@@ -78,7 +78,7 @@ export function useAuth(): AuthContextType {
 
   async function initiateGoogleLogin() {
     try {
-      const response = await fetch('/api/auth/google', { method: 'GET' })
+      const response = await fetch('/api/google-auth/callback/signin', { method: 'GET' })
       if (!response.ok) {
         throw new Error('Failed to initiate Google login')
       }

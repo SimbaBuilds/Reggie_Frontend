@@ -17,6 +17,7 @@ import { OnboardingTutorialForm } from './forms/OnboardingTutorialForm'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ComponentType } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 const STEP_COMPONENTS: Record<string, ComponentType<StepProps>> = {
   initialSignUp: InitialRegistrationForm,
@@ -40,6 +41,9 @@ export interface StepProps {
 }
 
 export function RegistrationPage() {
+  const searchParams = useSearchParams();
+  const initialStep = searchParams.get('step');
+
   const {
     registrationState,
     currentStep,
@@ -48,7 +52,8 @@ export function RegistrationPage() {
     goToPreviousStep,
     calculateProgress,
     finalizeRegistration,
-  } = useRegistrationFlow();
+    setCurrentStepByKey,
+  } = useRegistrationFlow(initialStep);
 
   const StepComponent = STEP_COMPONENTS[currentStep.key as keyof typeof STEP_COMPONENTS] as ComponentType<StepProps>;
 
