@@ -1,28 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/auth';
-import { SubscriptionType } from '@/types/db_models';
+import { OrgData, ExistingOrganization, PlanData } from '@/types/types';
 import { checkExistingOrganizations, createOrganization, joinOrganization, setPlan } from '../../../services/fastapi_backend/registration/api';
 
-export interface OrganizationData {
-  name: string;
-  type: 'school' | 'district' | 'other';
-  size: 'small' | 'large';
-}
 
-export type PlanData = {
-  name: SubscriptionType;
-  price: number;
-};
 
-export interface ExistingOrganization {
-  id: string;
-  name: string;
-  type: 'school' | 'district' | 'other';
-  size: 'small' | 'large';
-}
+
 
 export function useOrganizationRegistration() {
-  const [organizationData, setOrganizationData] = useState<OrganizationData | null>(null);
+  const [organizationData, setOrganizationData] = useState<OrgData | null>(null);
   const [existingOrganizations, setExistingOrganizations] = useState<ExistingOrganization[]>([]);
   const { getToken } = useAuth();
 
@@ -40,7 +26,7 @@ export function useOrganizationRegistration() {
     }
   };
 
-  const createNewOrganization = async (orgData: OrganizationData): Promise<void> => {
+  const createNewOrganization = async (orgData: OrgData): Promise<void> => {
     try {
       const token = await getToken();
       if (!token) throw new Error('No authentication token available');
@@ -72,7 +58,7 @@ export function useOrganizationRegistration() {
       if (!token) throw new Error('No authentication token available');
 
       const data = await setPlan(planData, token);
-      setOrganizationData(prev => ({ ...prev, ...data }));
+      setOrganizationData(prev => prev ? { ...prev, ...data } as OrgData : null);
     } catch (error) {
       console.error('Error setting plan:', error);
       throw error;

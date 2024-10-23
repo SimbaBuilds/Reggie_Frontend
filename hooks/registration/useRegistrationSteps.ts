@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { RegistrationState } from './useRegistrationFlow'
-import { SubscriptionType } from '../../types/db_models'
+import { SubscriptionType } from '../../types/types'
 
 interface RegistrationStep {
   key: string;

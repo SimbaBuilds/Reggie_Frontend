@@ -1,51 +1,44 @@
-export enum SubscriptionType {
-  Free = "free",
-  DigitizeOnly = "digitize_only",
-  Full = "full",
-}
+// Replace enums with const objects and union types
+export const SubscriptionType = {
+  Free: "free",
+  DigitizeOnly: "digitize_only",
+  Full: "full",
+} as const;
+export type SubscriptionType = typeof SubscriptionType[keyof typeof SubscriptionType];
 
-export enum OrganizationType {
-  School = "school",
-  District = "district",
-  Other = "other",
-}
+export const OrganizationType = {
+  School: "school",
+  District: "district",
+  Other: "other",
+} as const;
+export type OrganizationType = typeof OrganizationType[keyof typeof OrganizationType];
 
-export enum OrganizationSize {
-  Small = "small",
-  Large = "large",
-}
+export const OrganizationSize = {
+  Small: "small",
+  Large: "large",
+} as const;
+export type OrganizationSize = typeof OrganizationSize[keyof typeof OrganizationSize];
 
-export enum ProcessingStatus {
-  Pending = "pending",
-  Processing = "processing",
-  Uploaded = "uploaded",
-  Failed = "failed",
-}
+export const ProcessingStatus = {
+  Pending: "pending",
+  Processing: "processing",
+  Uploaded: "uploaded",
+  Failed: "failed",
+} as const;
+export type ProcessingStatus = typeof ProcessingStatus[keyof typeof ProcessingStatus];
 
-export enum JobStatus {
-  Pending = "pending",
-  InProgress = "in_progress",
-  Completed = "completed",
-  Failed = "failed",
-}
+export const JobStatus = {
+  Pending: "pending",
+  InProgress: "in_progress",
+  Completed: "completed",
+  Failed: "failed",
+} as const;
+export type JobStatus = typeof JobStatus[keyof typeof JobStatus];
 
-export interface User {
-  id?: number;
-  email: string;
-  hashed_password?: string;
-  first_name: string;
-  last_name: string;
-  organization_id: number;
-  organization_name: string;
-  created_at: string; // ISO date string
-  last_login?: string; // ISO date string
-  email_alias?: string;
-}
-
-export interface Organization {
+export interface OrgData {
   id: number;
   name: string;
-  created_at: string; // ISO date string
+  created_at: string;
   type: OrganizationType;
   size: OrganizationSize;
   created_by: number;
@@ -56,7 +49,17 @@ export interface Organization {
   email_labels_created: boolean;
   email_template_created: boolean;
   subscription_type: SubscriptionType;
+  }
+
+
+export interface UserData {
+  email: string;
+  password?: string;
+  first_name: string;
+  last_name: string;
+  email_alias?: string;
 }
+
 
 export interface Student {
   id?: number;
@@ -147,3 +150,24 @@ export interface EmailThreadInfo {
   history_id?: string;
 }
 
+
+
+  
+export interface UserResponse extends UserData {
+id: string;
+message: string;
+}
+
+
+
+export interface PlanData {
+name: SubscriptionType;
+price: number;
+}
+
+export interface ExistingOrganization {
+id: string;
+name: string;
+type: OrganizationType;
+size: OrganizationSize;
+}

@@ -1,6 +1,4 @@
-import { UserData, UserResponse } from '../../../hooks/registration/sub-hooks/useInitialRegistration';
-import { OrganizationData, PlanData } from '../../../hooks/registration/sub-hooks/useOrganizationDetails';
-import { ExistingOrganization } from '../../../hooks/registration/sub-hooks/useOrganizationDetails';
+import { OrgData, PlanData, ExistingOrganization, UserData, UserResponse } from '@/types/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL;
 
@@ -19,14 +17,6 @@ export async function signUpUser(userData: UserData): Promise<UserResponse> {
   return await response.json();
 }
 
-export async function startSignupProcess(userData: UserData): Promise<void> {
-  await fetch(`${API_BASE_URL}/signup/start`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(userData),
-  });
-}
-
 export async function checkExistingOrganizations(name: string, token: string): Promise<ExistingOrganization[]> {
   const response = await fetch(`${API_BASE_URL}/api/organizations?name=${encodeURIComponent(name)}`, {
     method: 'GET',
@@ -41,7 +31,7 @@ export async function checkExistingOrganizations(name: string, token: string): P
   return data.data;
 }
 
-export async function createOrganization(orgData: OrganizationData, token: string): Promise<OrganizationData> {
+export async function createOrganization(orgData: OrgData, token: string): Promise<OrgData> {
   const response = await fetch(`${API_BASE_URL}/api/organization`, {
     method: 'POST',
     headers: {
@@ -56,7 +46,7 @@ export async function createOrganization(orgData: OrganizationData, token: strin
   return data.data;
 }
 
-export async function joinOrganization(organizationId: string, token: string): Promise<OrganizationData> {
+export async function joinOrganization(organizationId: string, token: string): Promise<OrgData> {
   const response = await fetch(`${API_BASE_URL}/api/join-organization`, {
     method: 'POST',
     headers: {
@@ -71,7 +61,7 @@ export async function joinOrganization(organizationId: string, token: string): P
   return data.data;
 }
 
-export async function setPlan(planData: PlanData, token: string): Promise<OrganizationData> {
+export async function setPlan(planData: PlanData, token: string): Promise<PlanData> {
   const response = await fetch(`${API_BASE_URL}/api/plan`, {
     method: 'POST',
     headers: {

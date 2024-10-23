@@ -1,30 +1,19 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/auth';
-import { useOrganizationRegistration, PlanData } from './sub-hooks/useOrganizationDetails';
 import { useRouter } from 'next/navigation';
 import { useRegistrationSteps } from './useRegistrationSteps';
-import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/db_models';
-import { useInitialRegistration, UserData } from './sub-hooks/useInitialRegistration';
+import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/types';
+import { useInitialRegistration } from './sub-hooks/useInitialRegistration';
+import { useOrganizationRegistration } from './sub-hooks/useOrganizationDetails';
+import { UserData, OrgData, PlanData, UserResponse } from '@/types/types';
+import { DataUpload } from './sub-hooks/useDataUpload';
 
 export interface RegistrationState {
   user: UserData;
-  organization: {
-    name: string;
-    type: OrganizationType;
-    size: OrganizationSize;
-    rosters_uploaded: boolean;
-    records_digitized: boolean;
-    records_organized: boolean;
-    transcripts_uploaded: boolean;
-    email_labels_created: boolean;
-    email_template_created: boolean;
-  };
+  organization: OrgData;
   plan: PlanData;
   googleIntegration: boolean;
-  dataUpload: {
-    studentList: boolean;
-    staffList: boolean;
-  };
+  dataUpload: DataUpload;
   googleDriveSetup: boolean;
   digitizationMethod: 'consistentFirstPage' | 'coverPage' | 'manualOrganization' | null;
   transcriptHandling: boolean;
@@ -36,18 +25,22 @@ export interface RegistrationState {
 }
 
 export function useRegistrationFlow() {
-  const [registrationState, setRegistrationState] = useState<RegistrationState>({
+  const [registrationState, setRegistrationState] = useState<RegistrationState>(() => ({
     user: { email: '', password: '', first_name: '', last_name: '', email_alias: '' },
-    organization: { 
-      name: '', 
-      type: OrganizationType.School, 
-      size: OrganizationSize.Small, 
-      rosters_uploaded: false, 
-      records_digitized: false, 
-      records_organized: false, 
-      transcripts_uploaded: false, 
-      email_labels_created: false, 
-      email_template_created: false  
+    organization: {
+      id: 0, // or undefined if you prefer
+      name: '',
+      created_at: '', // or new Date().toISOString() if you want a default
+      type: OrganizationType.School,
+      size: OrganizationSize.Small,
+      created_by: 0, // or undefined
+      rosters_uploaded: false,
+      records_digitized: false,
+      records_organized: false,
+      transcripts_uploaded: false,
+      email_labels_created: false,
+      email_template_created: false,
+      subscription_type: SubscriptionType.Free
     },
     plan: { name: SubscriptionType.Free, price: 0 },
     googleIntegration: false,
@@ -63,11 +56,11 @@ export function useRegistrationFlow() {
     userAccounts: [],
     isOrganizationPrimaryUser: false,
     onboardingTutorialCompleted: false,
-  });
+  }));
 
   const { getToken } = useAuth();
-  const { handleSignUp, handleGoogleSignUpClick } = useInitialRegistration();
-  const { createNewOrganization, joinExistingOrganization, setPlan, checkExistingOrganization } = useOrganizationRegistration();
+  const initialRegistration = useInitialRegistration();
+  const organizationRegistration = useOrganizationRegistration();
   const router = useRouter();
   const {
     REGISTRATION_STEPS,
@@ -78,13 +71,12 @@ export function useRegistrationFlow() {
     calculateProgress,
   } = useRegistrationSteps(registrationState);
 
-  const updateRegistrationState = (update: Partial<RegistrationState>) => {
-    setRegistrationState((prev) => ({ ...prev, ...update }));
-  };
+  const updateRegistrationState = useCallback((update: Partial<RegistrationState>) => {
+    setRegistrationState(prev => ({ ...prev, ...update }));
+  }, []);
 
-  const handleInitialSignUp = async (userData: UserData) => {
+  const handleInitialSignUp = async (signUpResult: UserResponse) => {
     try {
-      const signUpResult = await handleSignUp(userData);
       updateRegistrationState({ user: signUpResult });
     } catch (error) {
       console.error('Error during initial sign up:', error);
@@ -92,16 +84,16 @@ export function useRegistrationFlow() {
     }
   };
 
-  const handleOrganizationDetails = async (orgData: { name: string; type: OrganizationType; size: OrganizationSize }) => {
+  const handleOrganizationDetails = async (orgData: OrgData): Promise<void> => {
     try {
-      await createNewOrganization(orgData);
-      updateRegistrationState({
+      await organizationRegistration.createNewOrganization(orgData);
+      setRegistrationState(prevState => ({
+        ...prevState,
         organization: {
-          ...registrationState.organization,
+          ...prevState.organization,
           ...orgData,
-        }
-      });
-      return true;
+        },
+      }));
     } catch (error) {
       console.error('Error setting organization details:', error);
       throw error;
@@ -110,7 +102,7 @@ export function useRegistrationFlow() {
 
   const handleJoinExistingOrganization = async (organizationId: string) => {
     try {
-      await joinExistingOrganization(organizationId);
+      await organizationRegistration.joinExistingOrganization(organizationId);
       // Update registration state with joined organization details
       // You might need to fetch the organization details after joining
     } catch (error) {
@@ -121,7 +113,7 @@ export function useRegistrationFlow() {
 
   const handlePlanSelection = async (planData: PlanData) => {
     try {
-      await setPlan(planData);
+      await organizationRegistration.setPlan(planData);
       updateRegistrationState({ plan: planData });
     } catch (error) {
       console.error('Error setting plan:', error);
@@ -170,49 +162,35 @@ export function useRegistrationFlow() {
     }
   };
 
-  const handleStepSubmit = async (data: any) => {
-    switch (currentStep.key) {
-      case 'initialSignUp':
-        await handleInitialSignUp(data);
-        break;
-      case 'organizationDetails':
-        await handleOrganizationDetails(data);
-        break;
-      case 'planSelection':
-        await handlePlanSelection(data);
-        break;
-      case 'googleIntegration':
-        handleGoogleIntegration(data);
-        break;
-      case 'dataUpload':
-        handleDataUpload(data);
-        break;
-      case 'googleDriveSetup':
-        handleGoogleDriveSetup(data);
-        break;
-      case 'digitizationPreferences':
-        handleDigitizationPreferences(data);
-        break;
-      case 'emailConfiguration':
-        handleEmailConfiguration(data);
-        break;
-      case 'transcriptHandling':
-        handleTranscriptHandling(data);
-        break;
-      case 'templateResponses':
-        handleTemplateResponses(data);
-        break;
-      case 'userAccounts':
-        handleUserAccounts(data);
-        break;
-      case 'onboardingTutorial':
-        handleOnboardingTutorial(data);
-        break;
-      default:
-        console.error('Unknown step:', currentStep.key);
+  const handleStepSubmit = useCallback(async (data: any) => {
+    const stepHandlers: Record<string, (data: any) => Promise<void> | void> = {
+      initialSignUp: handleInitialSignUp,
+      organizationDetails: handleOrganizationDetails,
+      planSelection: handlePlanSelection,
+      googleIntegration: handleGoogleIntegration,
+      dataUpload: handleDataUpload,
+      googleDriveSetup: handleGoogleDriveSetup,
+      digitizationPreferences: handleDigitizationPreferences,
+      emailConfiguration: handleEmailConfiguration,
+      transcriptHandling: handleTranscriptHandling,
+      templateResponses: handleTemplateResponses,
+      userAccounts: handleUserAccounts,
+      onboardingTutorial: handleOnboardingTutorial,
+    };
+
+    const handler = stepHandlers[currentStep.key];
+    if (handler) {
+      try {
+        await handler(data);
+        goToNextStep();
+      } catch (error) {
+        console.error(`Error in ${currentStep.key} step:`, error);
+        // Handle the error appropriately, e.g., show an error message
+      }
+    } else {
+      console.error('Unknown step:', currentStep.key);
     }
-    goToNextStep();
-  };
+  }, [currentStep.key, goToNextStep]);
 
   const handleGoogleDriveSetup = (setup: boolean) => {
     updateRegistrationState({ googleDriveSetup: setup });
@@ -247,8 +225,6 @@ export function useRegistrationFlow() {
     handleTranscriptHandling,
     handleEmailConfiguration,
     handleUserAccounts,
-    handleGoogleSignUpClick,
-    checkExistingOrganization,
     handleGoogleDriveSetup,
     handleDigitizationPreferences,
     handleTemplateResponses,

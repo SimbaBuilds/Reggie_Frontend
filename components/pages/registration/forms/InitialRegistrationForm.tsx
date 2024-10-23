@@ -2,6 +2,8 @@
 
 import { StepProps } from '../RegistrationPage'
 import { useInitialRegistration } from '@/hooks/registration/sub-hooks/useInitialRegistration'
+import { UserData } from '@/types/types'
+import { Button } from '@/components/ui/button'
 
 export function InitialRegistrationForm({ onSubmit, registrationState, onPrevious }: StepProps) {
   const {
@@ -23,8 +25,12 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
     handleGoogleSignUpClick
   } = useInitialRegistration()
 
+  const handleSubmit = (e: React.FormEvent) => {
+    onSubmitForm(e, onSubmit)
+  }
+
   return (
-    <form onSubmit={onSubmitForm} className="bg-background shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
           Email
@@ -114,13 +120,13 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
       {signupError && <p className="text-red-500 text-xs italic mb-4">{signupError}</p>}
 
       <div className="flex flex-col gap-4">
-        <button
+        <Button
           type="submit"
           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded font-medium"
           disabled={isLoading}
         >
           {isLoading ? 'Signing Up...' : 'Sign Up'}
-        </button>
+        </Button>
 
         <div className="flex items-center my-4">
           <div className="flex-grow border-t border-gray-300"></div>
@@ -128,11 +134,10 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        <button
+        <Button
           type="button"
           onClick={handleGoogleSignUpClick}
           className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 py-2 px-4 rounded font-medium flex items-center justify-center"
-          disabled={isLoading}
         >
           <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" className="mr-2">
             <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -143,7 +148,7 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
             </g>
           </svg>
           Sign up with Google
-        </button>
+        </Button>
       </div>
     </form>
   )

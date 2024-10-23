@@ -1,22 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useRegistrationFlow } from 'hooks/registration/useRegistrationFlow'
 import { signIn } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
-import { signUpUser, startSignupProcess } from '../../../services/fastapi_backend/registration/api'
-
-// Define the UserData interface if it's not already defined elsewhere
-export interface UserData {
-  email: string;
-  password?: string;
-  first_name: string;
-  last_name: string;
-  email_alias?: string;
-}
-
-export interface UserResponse extends UserData {
-  id: string;
-  message: string;
-}
+import { signUpUser } from '../../../services/fastapi_backend/registration/api'
+import { UserData, UserResponse } from '@/types/types'
 
 export function useInitialRegistration() {
   const [email, setEmail] = useState('')
@@ -34,7 +20,6 @@ export function useInitialRegistration() {
     match: false
   })
 
-  const { handleInitialSignUp } = useRegistrationFlow()
   const { toast } = useToast()
 
   useEffect(() => {
@@ -51,20 +36,11 @@ export function useInitialRegistration() {
 
     try {
       const data = await signUpUser(userData)
-      await startSignupProcess({
-        email: data.email,
-        password: userData.password,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        email_alias: data.email_alias
-      })
-
       toast({
         title: "Sign Up Successful",
         description: "Your account has been created successfully.",
         duration: 5000,
       })
-
       return data
     } catch (error) {
       console.error('Error signing up:', error)
@@ -81,17 +57,17 @@ export function useInitialRegistration() {
     }
   }
 
-  const onSubmitForm = async (e: React.FormEvent) => {
+  const onSubmitForm = async (e: React.FormEvent, onSubmit: (data: UserResponse) => Promise<void>) => {
     e.preventDefault()
+    if (isLoading) return // Prevent multiple submissions
     if (!passwordStrength.length || !passwordStrength.numberOrSymbol || !passwordStrength.match) {
       setPasswordError("Please ensure all password requirements are met")
       return
     }
     try {
       const userData: UserData = { email, password, first_name: firstName, last_name: lastName }
-      const signUpResult: UserResponse = await handleSignUp(userData)
-      
-      await handleInitialSignUp({ ...signUpResult, password })
+      const signUpResult = await handleSignUp(userData)
+      await onSubmit(signUpResult)
     } catch (error) {
       console.error('Error signing up:', error)
       setSignupError(error instanceof Error ? error.message : 'An error occurred during signup')
