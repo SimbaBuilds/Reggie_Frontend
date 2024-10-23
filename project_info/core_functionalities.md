@@ -50,7 +50,9 @@ The user portal aspect of the application will help the user navigate the follow
     1. Initial Registration:
         1. User provides basic information: name, email, and password.
         Selecting the sign up with google option will auto assign name, email, and password, but they will be prompted to complete the registration steps.
-        2. User enters or registers their organization -- to rergister your organization select organization type (school, district, etc.) and size (small(<500) or large(500+)).
+        2. User enters or registers their organization 
+            1. To register their organization, they must enter an org name, select organization type (school, district, etc.), and size (small(<1000) or large(1000+)).
+            2. To slection an existing organization, they must enter an organization name (not case sensetive) and id.
     2. Plan Selection:
     (If user has selected an organization that has already signed up for a plan, skip)
     Based on the organization size, recommend an appropriate plan.

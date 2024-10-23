@@ -48,7 +48,7 @@ export function useRegistrationFlow() {
 
   const { getToken } = useAuth();
   const { handleSignUp, handleGoogleSignUp: registerGoogleUser } = useRegisterUser();
-  const { createNewOrganization, setPlan } = useOrganizationRegistration();
+  const { createNewOrganization, joinExistingOrganization, setPlan, checkExistingOrganization } = useOrganizationRegistration();
   const router = useRouter();
 
   const updateRegistrationState = (update: Partial<RegistrationState>) => {
@@ -65,7 +65,6 @@ export function useRegistrationFlow() {
     }
   };
 
-
   const handleOrganizationDetails = async (orgData: { name: string; type: 'school' | 'district' | 'other'; size: 'small' | 'large' }) => {
     try {
       await createNewOrganization(orgData);
@@ -75,8 +74,20 @@ export function useRegistrationFlow() {
           ...orgData,
         }
       });
+      return true; // Return true on success
     } catch (error) {
       console.error('Error setting organization details:', error);
+      throw error;
+    }
+  };
+
+  const handleJoinExistingOrganization = async (organizationId: string) => {
+    try {
+      await joinExistingOrganization(organizationId);
+      // Update registration state with joined organization details
+      // You might need to fetch the organization details after joining
+    } catch (error) {
+      console.error('Error joining existing organization:', error);
       throw error;
     }
   };
@@ -154,6 +165,7 @@ export function useRegistrationFlow() {
     registrationState,
     handleInitialSignUp,
     handleOrganizationDetails,
+    handleJoinExistingOrganization,
     handlePlanSelection,
     handleGoogleIntegration,
     handleDataUpload,
@@ -162,5 +174,6 @@ export function useRegistrationFlow() {
     handleUserAccounts,
     finalizeRegistration,
     handleGoogleSignUp,
+    checkExistingOrganization,
   };
 }
