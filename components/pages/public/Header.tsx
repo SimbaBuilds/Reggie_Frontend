@@ -22,7 +22,7 @@ export default function Header() {
   };
 
   const handleSignUp = () => {
-    router.push('/signup');
+    router.push('/registration');
   };
 
   return (

@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       console.log('Backend response status:', backendResponse.status);
 
       if (backendResponse.ok) {
-        console.log('Registration successful, redirecting to organization details');
-        return NextResponse.redirect(new URL('/registration/organization-details', request.url));
+        console.log('Registration successful, redirecting to registration page');
+        return NextResponse.redirect(new URL('/registration', request.url));
       } else {
         const errorData = await backendResponse.json();
         console.error('Registration failed', backendResponse.status, JSON.stringify(errorData, null, 2));

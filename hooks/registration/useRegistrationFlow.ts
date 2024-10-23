@@ -1,21 +1,17 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/auth';
-import { useRegisterUser } from './useRegisterUser';
-import { useOrganizationRegistration } from './useRegisterOrg';
+import { useOrganizationRegistration, PlanData } from './sub-hooks/useOrganizationDetails';
 import { useRouter } from 'next/navigation';
+import { useRegistrationSteps } from './useRegistrationSteps';
+import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/db_models';
+import { useInitialRegistration, UserData } from './sub-hooks/useInitialRegistration';
 
 export interface RegistrationState {
-  user: {
-    email: string;
-    password: string;
-    first_name: string;
-    last_name: string;
-    email_alias?: string;
-  };
+  user: UserData;
   organization: {
     name: string;
-    type: 'school' | 'district' | 'other';
-    size: 'small' | 'large';
+    type: OrganizationType;
+    size: OrganizationSize;
     rosters_uploaded: boolean;
     records_digitized: boolean;
     records_organized: boolean;
@@ -23,10 +19,7 @@ export interface RegistrationState {
     email_labels_created: boolean;
     email_template_created: boolean;
   };
-  plan: {
-    name: 'digitize' | 'small' | 'large';
-    price: number;
-  };
+  plan: PlanData;
   googleIntegration: boolean;
   dataUpload: boolean;
   transcriptHandling: boolean;
@@ -37,8 +30,18 @@ export interface RegistrationState {
 export function useRegistrationFlow() {
   const [registrationState, setRegistrationState] = useState<RegistrationState>({
     user: { email: '', password: '', first_name: '', last_name: '', email_alias: '' },
-    organization: { name: '', type: 'school', size: 'small', rosters_uploaded: false, records_digitized: false, records_organized: false, transcripts_uploaded: false, email_labels_created: false, email_template_created: false  },
-    plan: { name: 'small', price: 40 },
+    organization: { 
+      name: '', 
+      type: OrganizationType.School, 
+      size: OrganizationSize.Small, 
+      rosters_uploaded: false, 
+      records_digitized: false, 
+      records_organized: false, 
+      transcripts_uploaded: false, 
+      email_labels_created: false, 
+      email_template_created: false  
+    },
+    plan: { name: SubscriptionType.Free, price: 0 },
     googleIntegration: false,
     dataUpload: false,
     transcriptHandling: false,
@@ -47,25 +50,26 @@ export function useRegistrationFlow() {
   });
 
   const { getToken } = useAuth();
-  const { handleSignUp, handleGoogleSignUp: registerGoogleUser } = useRegisterUser();
+  const { handleSignUp, handleGoogleSignUpClick } = useInitialRegistration();
   const { createNewOrganization, joinExistingOrganization, setPlan, checkExistingOrganization } = useOrganizationRegistration();
   const router = useRouter();
+  const { REGISTRATION_STEPS, currentStep, isLastStep, goToNextStep, goToPreviousStep } = useRegistrationSteps(registrationState);
 
   const updateRegistrationState = (update: Partial<RegistrationState>) => {
     setRegistrationState((prev) => ({ ...prev, ...update }));
   };
 
-  const handleInitialSignUp = async (userData: { email: string; password: string; first_name: string; last_name: string }) => {
+  const handleInitialSignUp = async (userData: UserData) => {
     try {
-      await handleSignUp(userData);
-      updateRegistrationState({ user: { email: userData.email, password: userData.password, first_name: userData.first_name, last_name: userData.last_name } });
+      const signUpResult = await handleSignUp(userData);
+      updateRegistrationState({ user: signUpResult });
     } catch (error) {
       console.error('Error during initial sign up:', error);
       throw error;
     }
   };
 
-  const handleOrganizationDetails = async (orgData: { name: string; type: 'school' | 'district' | 'other'; size: 'small' | 'large' }) => {
+  const handleOrganizationDetails = async (orgData: { name: string; type: OrganizationType; size: OrganizationSize }) => {
     try {
       await createNewOrganization(orgData);
       updateRegistrationState({
@@ -74,7 +78,7 @@ export function useRegistrationFlow() {
           ...orgData,
         }
       });
-      return true; // Return true on success
+      return true;
     } catch (error) {
       console.error('Error setting organization details:', error);
       throw error;
@@ -92,7 +96,7 @@ export function useRegistrationFlow() {
     }
   };
 
-  const handlePlanSelection = async (planData: { name: 'digitize' | 'small' | 'large'; price: number }) => {
+  const handlePlanSelection = async (planData: PlanData) => {
     try {
       await setPlan(planData);
       updateRegistrationState({ plan: planData });
@@ -143,26 +147,34 @@ export function useRegistrationFlow() {
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    try {
-      const userData = await registerGoogleUser();
-      updateRegistrationState({ 
-        user: { 
-          email: userData.email, 
-          password: '', // Google sign-up doesn't use a password
-          first_name: userData.first_name, 
-          last_name: userData.last_name 
-        } 
-      });
-      // The redirection is now handled by the callbackUrl in signIn
-    } catch (error) {
-      console.error('Error during Google sign up:', error);
-      throw error;
+
+  const calculateProgress = () => {
+    const completedSteps = REGISTRATION_STEPS.filter((step) =>
+      step.isCompleted(registrationState)
+    ).length;
+    return Math.round((completedSteps / REGISTRATION_STEPS.length) * 100);
+  };
+
+  const handleStepSubmit = async (data: any) => {
+    switch (currentStep.key) {
+      case 'initialSignUp':
+        await handleInitialSignUp(data);
+        break;
+      case 'organizationDetails':
+        await handleOrganizationDetails(data);
+        break;
+      // ... other cases
     }
+    goToNextStep();
   };
 
   return {
     registrationState,
+    currentStep,
+    isLastStep,
+    handleStepSubmit,
+    goToPreviousStep,
+    calculateProgress,
     handleInitialSignUp,
     handleOrganizationDetails,
     handleJoinExistingOrganization,
@@ -173,7 +185,7 @@ export function useRegistrationFlow() {
     handleEmailConfiguration,
     handleUserAccounts,
     finalizeRegistration,
-    handleGoogleSignUp,
+    handleGoogleSignUpClick,
     checkExistingOrganization,
   };
 }

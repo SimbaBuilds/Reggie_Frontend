@@ -1,80 +1,27 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import { useRegistrationFlow } from 'hooks/registration/useRegistrationFlow'
-import { RegistrationState } from '@/hooks/registration/useRegistrationFlow';
-import { useRegisterUser} from '@/hooks/registration/useRegisterUser';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { StepProps } from '../RegistrationPage'
+import { useInitialRegistration } from '@/hooks/registration/sub-hooks/useInitialRegistration'
 
-interface InitialRegistrationFormProps {
-  onSubmit: (data: any) => Promise<void>;
-  registrationState: RegistrationState;
-  onGoogleSignUp: () => Promise<void>;
-}
-
-export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleSignUp }: InitialRegistrationFormProps) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [passwordError, setPasswordError] = useState('')
-  const [signupError, setSignupError] = useState('')
-  const { handleInitialSignUp } = useRegistrationFlow()
-  const [passwordStrength, setPasswordStrength] = useState({
-    length: false,
-    numberOrSymbol: false,
-    match: false
-  })
-  const { handleSignUp, handleGoogleSignUp } = useRegisterUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    setPasswordStrength({
-      length: password.length >= 8 && password.length <= 20,
-      numberOrSymbol: /[\d!@#$%^&*(),.?":{}|<>]/.test(password),
-      match: password === confirmPassword && password !== ''
-    })
-  }, [password, confirmPassword])
-
-  const onSubmitForm = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!passwordStrength.length || !passwordStrength.numberOrSymbol || !passwordStrength.match) {
-      setPasswordError("Please ensure all password requirements are met")
-      return
-    }
-    try {
-      await handleSignUp({ email, password, first_name: firstName, last_name: lastName })
-      router.push('/registration/organization-details')
-    } catch (error) {
-      console.error('Error signing up:', error)
-      setSignupError(error instanceof Error ? error.message : 'An error occurred during signup')
-    }
-  }
-
-  const handleGoogleSignUpClick = async () => {
-    try {
-      console.log('Initiating Google Sign-In');
-      const result = await signIn('google', { 
-        redirect: false,
-        callbackUrl: `${window.location.origin}/auth/callback`
-      });
-      
-      console.log('Google Sign-In result:', result);
-      
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-
-      if (result?.ok) {
-        console.log('Google Sign-In successful, redirecting...');
-      }
-    } catch (error) {
-      console.error('Error signing up with Google:', error);
-      setSignupError(error instanceof Error ? error.message : 'An error occurred during Google signup');
-    }
-  };
+export function InitialRegistrationForm({ onSubmit, registrationState, onPrevious }: StepProps) {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    passwordError,
+    signupError,
+    passwordStrength,
+    isLoading,
+    onSubmitForm,
+    handleGoogleSignUpClick
+  } = useInitialRegistration()
 
   return (
     <form onSubmit={onSubmitForm} className="bg-background shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -106,10 +53,10 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
           required
         />
         <div className="mt-2 text-sm">
-          <p className={passwordStrength.length ? "text-green-500" : "text-red-500"}>
+          <p className={passwordStrength.length ? "text-green-500" : "text-gray-300"}>
             • 8-20 characters
           </p>
-          <p className={passwordStrength.numberOrSymbol ? "text-green-500" : "text-red-500"}>
+          <p className={passwordStrength.numberOrSymbol ? "text-green-500" : "text-gray-300"}>
             • Contains at least one number or symbol
           </p>
         </div>
@@ -128,7 +75,7 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
           required
         />
         <div className="mt-2 text-sm">
-          <p className={passwordStrength.match ? "text-green-500" : "text-red-500"}>
+          <p className={passwordStrength.match ? "text-green-500" : "text-gray-300"}>
             • Passwords match
           </p>
         </div>
@@ -170,8 +117,9 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
         <button
           type="submit"
           className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-4 rounded font-medium"
+          disabled={isLoading}
         >
-          Sign Up
+          {isLoading ? 'Signing Up...' : 'Sign Up'}
         </button>
 
         <div className="flex items-center my-4">
@@ -184,6 +132,7 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onGoogleS
           type="button"
           onClick={handleGoogleSignUpClick}
           className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 py-2 px-4 rounded font-medium flex items-center justify-center"
+          disabled={isLoading}
         >
           <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" className="mr-2">
             <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">

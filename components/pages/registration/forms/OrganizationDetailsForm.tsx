@@ -7,14 +7,9 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
+import { StepProps } from '../RegistrationPage'
 
-interface OrganizationDetailsFormProps {
-  onSubmit: (data: any) => Promise<void>;
-  onExistingOrg: (name: string) => Promise<void>;
-  registrationState: RegistrationState;
-}
-
-export function OrganizationDetailsForm({ onSubmit, onExistingOrg, registrationState }: OrganizationDetailsFormProps) {
+export function OrganizationDetailsForm({ onSubmit, registrationState, onPrevious }: StepProps) {
   const [name, setName] = useState(registrationState.organization.name)
   const [type, setType] = useState<'school' | 'district' | 'other'>(registrationState.organization.type)
   const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size)
@@ -46,13 +41,7 @@ export function OrganizationDetailsForm({ onSubmit, onExistingOrg, registrationS
 
     setIsSubmitting(true)
     try {
-      if (isNewOrg) {
-        console.log("Submitting new organization:", { name, type, size })
-        await onSubmit({ name, type, size })
-      } else {
-        console.log("Submitting existing organization:", name)
-        await onExistingOrg(name)
-      }
+      await onSubmit({ name, type, size, isNewOrg })
       console.log("Form submission successful")
     } catch (error) {
       console.error("Error submitting form:", error)
@@ -129,9 +118,14 @@ export function OrganizationDetailsForm({ onSubmit, onExistingOrg, registrationS
         </>
       )}
 
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Submitting..." : "Next"}
-      </Button>
+      <div className="flex justify-between">
+        <Button type="button" onClick={onPrevious} variant="outline">
+          Previous
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Next"}
+        </Button>
+      </div>
     </form>
   )
 }
