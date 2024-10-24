@@ -79,18 +79,19 @@ export function useInitialRegistration() {
       console.log('Initiating Google Sign-In');
       const result = await signIn('google', { 
         redirect: false,
-        callbackUrl: `${window.location.origin}/api/google-auth/callback/signup`
+        callbackUrl: `${window.location.origin}/api/auth/callback/google`
       });
       
       console.log('Google Sign-In result:', result);
       
       if (result?.error) {
+        console.error('Error during Google Sign-In:', result.error);
         throw new Error(result.error);
       }
 
       if (result?.ok) {
         console.log('Google Sign-In successful, redirecting to callback');
-        window.location.href = result.url || '/api/google-auth/callback/signup';
+        window.location.href = result.url || '/api/auth/callback/google';
       }
     } catch (error) {
       console.error('Error signing up with Google:', error);

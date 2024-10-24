@@ -2,16 +2,17 @@
 
 import { useSearchParams } from "next/navigation"
 
-export default function AuthError() {
+const ErrorPage = () => {
   const searchParams = useSearchParams()
   const error = searchParams.get("error")
-  const details = searchParams.get("details")
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-4xl font-bold mb-4">Authentication Error</h1>
-      <p className="text-red-500">{error}</p>
-      {details && <p className="text-sm mt-2">Details: {details}</p>}
+    <div>
+      <h1>Error</h1>
+      <p>{error ? error : 'An unknown error occurred.'}</p>
+      <a href="/">Go back to home</a>
     </div>
   )
 }
+
+export default ErrorPage

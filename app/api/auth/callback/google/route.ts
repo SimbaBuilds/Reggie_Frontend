@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
 
       if (backendResponse.ok) {
         console.log('Registration successful, redirecting to registration page');
-        // Redirect to the registration page with the 'organizationDetails' step
         return NextResponse.redirect(new URL('/registration?step=organizationDetails', request.url));
       } else {
         const errorData = await backendResponse.json();
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/auth/error?error=RegistrationFailed&details=UnexpectedError', request.url));
     }
   }
-
   console.log('No token found, redirecting to error page');
   return NextResponse.redirect(new URL('/auth/error?error=AuthenticationFailed', request.url));
 }
+
