@@ -1,3 +1,8 @@
+
+
+// NOTE: Function below commented out in handleGoogleSignUpClick in useInitialRegistration.ts
+
+
 export async function clearGoogleAuth() {
   // Clear Google's authentication cache
   const googleLogoutUrl = 'https://accounts.google.com/logout';

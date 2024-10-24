@@ -79,8 +79,8 @@ export function useInitialRegistration() {
     try {
       console.log('Initiating Google Sign-In');
       
-      // Clear Google auth cache before initiating new sign-in
-      await clearGoogleAuth();
+      // // Clear Google auth cache before initiating new sign-in
+      // await clearGoogleAuth();
       
       // Add a small delay to ensure cache clearing is complete
       await new Promise(resolve => setTimeout(resolve, 500));
