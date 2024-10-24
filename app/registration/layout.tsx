@@ -17,9 +17,6 @@ export default function RegistrationLayout({
         <main className="mb-6">
           {children}
         </main>
-        <footer className="text-sm text-gray-600 text-center">
-          Registration Progress: {Object.keys(registrationState).filter(key => (registrationState as any)[key]).length} / {Object.keys(registrationState).length} steps completed
-        </footer>
       </div>
     </div>
   )
