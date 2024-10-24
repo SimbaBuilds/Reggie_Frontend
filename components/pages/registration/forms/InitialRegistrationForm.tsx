@@ -25,6 +25,16 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
     handleGoogleSignUpClick
   } = useInitialRegistration()
 
+  const clearGoogleCache = () => {
+    // Clear Google's OAuth cache
+    window.location.href = 'https://accounts.google.com/logout';
+    
+    // After a brief delay, redirect back to your app
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     onSubmitForm(e, onSubmit)
   }
@@ -149,6 +159,14 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
           </svg>
           Sign up with Google
         </Button>
+
+        {/* <Button
+          type="button"
+          onClick={clearGoogleCache}
+          className="w-full bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 py-2 px-4 rounded font-medium"
+        >
+          Clear Google Cache
+        </Button> */}
       </div>
     </form>
   )

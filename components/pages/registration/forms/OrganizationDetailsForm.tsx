@@ -1,13 +1,16 @@
 "use client"
 
-import { useState } from 'react'
-import { RegistrationState } from '@/hooks/registration/useRegistrationFlow'
+import { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { StepProps } from '../RegistrationPage'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useOrganizationDetails } from '@/hooks/registration/sub-hooks/useOrganizationDetails'
+import { OrgData, ExistingOrganization, PlanData } from '@/types/types';
+
 
 export function OrganizationDetailsForm({ onSubmit, registrationState, onPrevious }: StepProps) {
   const [name, setName] = useState(registrationState.organization.name)
@@ -15,7 +18,23 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
   const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isNewOrg, setIsNewOrg] = useState(true)
+  const [selectedOrg, setSelectedOrg] = useState('')
+  const [orgId, setOrgId] = useState('')
   const { toast } = useToast()
+
+  const {
+    organizationData,
+    existingOrganizations,
+    checkExistingOrganization,
+    createNewOrganization,
+    joinExistingOrganization,
+  } = useOrganizationDetails()
+
+  useEffect(() => {
+    if (!isNewOrg) {
+      checkExistingOrganization(name)
+    }
+  }, [isNewOrg, name, checkExistingOrganization])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,8 +60,13 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
 
     setIsSubmitting(true)
     try {
-      await onSubmit({ name, type, size, isNewOrg })
+      if (isNewOrg) {
+        await createNewOrganization({ name, type, size } as OrgData)
+      } else {
+        await joinExistingOrganization(selectedOrg)
+      }
       console.log("Form submission successful")
+      onSubmit(organizationData)
     } catch (error) {
       console.error("Error submitting form:", error)
       toast({
@@ -71,19 +95,19 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
         </RadioGroup>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="org-name">Organization Name</Label>
-        <Input
-          id="org-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={isNewOrg ? "Enter your organization name" : "Enter existing organization name"}
-          required
-        />
-      </div>
-
-      {isNewOrg && (
+      {isNewOrg ? (
         <>
+          <div className="space-y-2">
+            <Label htmlFor="org-name">Organization Name</Label>
+            <Input
+              id="org-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your organization name"
+              required
+            />
+          </div>
+
           <div className="space-y-2">
             <Label>Organization Type</Label>
             <RadioGroup value={type} onValueChange={(value: 'school' | 'district' | 'other') => setType(value)}>
@@ -114,6 +138,35 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
                 <Label htmlFor="large">Large (1000 or more people)</Label>
               </div>
             </RadioGroup>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor="org-select">Select Existing Organization</Label>
+            <Select value={selectedOrg} onValueChange={setSelectedOrg}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an organization" />
+              </SelectTrigger>
+              <SelectContent>
+                {existingOrganizations.map((org) => (
+                  <SelectItem key={org.id} value={org.id}>
+                    {org.name} ({org.type}, {org.size})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="org-id">Organization ID</Label>
+            <Input
+              id="org-id"
+              value={orgId}
+              onChange={(e) => setOrgId(e.target.value)}
+              placeholder="Enter organization ID"
+              required
+            />
           </div>
         </>
       )}

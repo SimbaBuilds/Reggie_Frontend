@@ -7,7 +7,7 @@ import { checkExistingOrganizations, createOrganization, joinOrganization, setPl
 
 
 
-export function useOrganizationRegistration() {
+export function useOrganizationDetails() {
   const [organizationData, setOrganizationData] = useState<OrgData | null>(null);
   const [existingOrganizations, setExistingOrganizations] = useState<ExistingOrganization[]>([]);
   const { getToken } = useAuth();

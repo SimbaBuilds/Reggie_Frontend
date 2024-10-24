@@ -78,12 +78,15 @@ export function useAuth(): AuthContextType {
 
   async function initiateGoogleLogin() {
     try {
-      const response = await fetch('/api/auth/callback/google', { method: 'GET' }); // Updated URL
-      if (!response.ok) {
-        throw new Error('Failed to initiate Google login');
-      }
+      const response = await fetch('/api/auth/callbackgoogle');
       const data = await response.json();
-      return data.authUrl;
+      
+      if (data.url) {
+        // Redirect to Google's auth URL
+        window.location.href = data.url;
+      } else {
+        throw new Error('No auth URL received');
+      }
     } catch (error) {
       console.error('Error initiating Google login:', error);
       throw error;

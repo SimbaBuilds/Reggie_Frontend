@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useRegistrationSteps } from './useRegistrationSteps';
 import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/types';
 import { useInitialRegistration } from './sub-hooks/useInitialRegistration';
-import { useOrganizationRegistration } from './sub-hooks/useOrganizationDetails';
+import { useOrganizationDetails } from './sub-hooks/useOrganizationDetails';
 import { UserData, OrgData, PlanData, UserResponse } from '@/types/types';
 import { DataUpload } from './sub-hooks/useDataUpload';
 
@@ -60,7 +60,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
 
   const { getToken } = useAuth();
   const initialRegistration = useInitialRegistration();
-  const organizationRegistration = useOrganizationRegistration();
+  const organizationDetails = useOrganizationDetails();
   const router = useRouter();
   const {
     REGISTRATION_STEPS,
@@ -87,7 +87,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
 
   const handleOrganizationDetails = async (orgData: OrgData): Promise<void> => {
     try {
-      await organizationRegistration.createNewOrganization(orgData);
+      await organizationDetails.createNewOrganization(orgData);
       setRegistrationState(prevState => ({
         ...prevState,
         organization: {
@@ -103,7 +103,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
 
   const handleJoinExistingOrganization = async (organizationId: string) => {
     try {
-      await organizationRegistration.joinExistingOrganization(organizationId);
+      await organizationDetails.joinExistingOrganization(organizationId);
       // Update registration state with joined organization details
       // You might need to fetch the organization details after joining
     } catch (error) {
@@ -114,7 +114,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
 
   const handlePlanSelection = async (planData: PlanData) => {
     try {
-      await organizationRegistration.setPlan(planData);
+      await organizationDetails.setPlan(planData);
       updateRegistrationState({ plan: planData });
     } catch (error) {
       console.error('Error setting plan:', error);

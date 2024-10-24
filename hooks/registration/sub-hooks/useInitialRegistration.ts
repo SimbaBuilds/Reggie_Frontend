@@ -3,6 +3,7 @@ import { signIn } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
 import { signUpUser } from '../../../services/fastapi_backend/registration/api'
 import { UserData, UserResponse } from '@/types/types'
+import { clearGoogleAuth } from '@/utils/auth-utils'
 
 export function useInitialRegistration() {
   const [email, setEmail] = useState('')
@@ -77,6 +78,13 @@ export function useInitialRegistration() {
   const handleGoogleSignUpClick = async () => {
     try {
       console.log('Initiating Google Sign-In');
+      
+      // Clear Google auth cache before initiating new sign-in
+      await clearGoogleAuth();
+      
+      // Add a small delay to ensure cache clearing is complete
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const result = await signIn('google', { 
         redirect: false,
         callbackUrl: `${window.location.origin}/api/auth/callback/google`
