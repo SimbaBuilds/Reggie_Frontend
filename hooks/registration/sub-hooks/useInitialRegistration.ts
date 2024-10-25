@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useToast } from '@/hooks/use-toast'
-import { signUpUser } from '../../../services/fastapi_backend/registration/api'
+import { signUpUser } from '../../../services/fastapi_backend/user_api'
 import { UserData, UserResponse } from '@/types/types'
-import { clearGoogleAuth } from '@/utils/auth-utils'
 
 export function useInitialRegistration() {
   const [email, setEmail] = useState('')

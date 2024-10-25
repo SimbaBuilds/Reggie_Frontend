@@ -1,44 +1,41 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/auth';
-import { OrgData, ExistingOrganization, OrganizationType, OrganizationSize, PlanData } from '@/types/types';
-import { checkExistingOrganizations, createOrganization, joinOrganization } from '../../../services/fastapi_backend/registration/api';
+import { OrganizationDetailsFormData, ExistingOrganization, OrganizationType, OrganizationSize, PlanData, OrgData, OrgCreateData } from '@/types/types';
+import { checkExistingOrganizations, createOrganization, joinOrganization } from '../../../services/fastapi_backend/org_api';
 import { useToast } from '@/hooks/use-toast';
+import { RegistrationState } from '../useRegistrationFlow';
 
 
-// Update the OrganizationDetailsFormData type
-type OrganizationDetailsFormData = OrgData & {
-  isNewOrg: boolean;
-  selectedOrgId: string;
-};
 
-export function useOrganizationDetails() {
+export function useOrganizationDetails(registrationState: RegistrationState) {
   const [formData, setFormData] = useState<OrganizationDetailsFormData>({
     name: '',
     type: '' as OrganizationType, // Use type assertion
     size: '' as OrganizationSize, // Use type assertion
+    created_by: 0,
     isNewOrg: true,
-    selectedOrgId: '',
+    selectedOrgId: 0,
   });
   const [existingOrganizations, setExistingOrganizations] = useState<ExistingOrganization[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { getToken } = useAuth();
   const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    console.log(`Input changed: ${name} = ${value}`);
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleRadioChange = (name: string, value: string) => {
+    console.log(`Radio changed: ${name} = ${value}`);
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const checkExistingOrganization = async (name: string) => {
+  const checkExistingOrganization = async (name: string, id: number) => {
+    console.log(`Checking existing organizations for name: ${name} and id: ${id}`);
     try {
-      const token = await getToken();
-      if (!token) throw new Error('No authentication token available');
-
-      const data = await checkExistingOrganizations(name, token);
+      const data = await checkExistingOrganizations(name, id);
+      console.log('Existing organizations found:', data);
       setExistingOrganizations(data);
     } catch (error) {
       console.error('Error checking existing organizations:', error);
@@ -50,35 +47,41 @@ export function useOrganizationDetails() {
     }
   };
 
-  
   const setPlan = async (planData: PlanData) => {
-    setFormData(prev => ({ ...prev, subscription_type: planData.subscription_type }));
+    console.log('Setting plan:', planData);
+    setFormData(prev => ({ ...prev, type: planData.type }));
   }
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log('Submitting organization details:', formData);
 
     try {
-      const token = await getToken();
-      if (!token) throw new Error('No authentication token available');
-
       let orgData: OrgData;
       let isPrimaryUser: boolean;
 
       if (formData.isNewOrg) {
-        orgData = await createOrganization({
+        console.log('Creating new organization');
+        if (!registrationState.user?.id) {
+          throw new Error('User ID is not available');
+        }
+        const createOrgData: OrgCreateData = {
           name: formData.name,
-          type: formData.type,
-          size: formData.size,
-        }, token);
+          type: formData.type as OrganizationType,
+          size: formData.size as OrganizationSize,
+          created_by: registrationState.user.id,
+        };
+        orgData = await createOrganization(createOrgData);
         isPrimaryUser = true;
       } else {
         if (!formData.selectedOrgId) throw new Error('No organization selected');
-        orgData = await joinOrganization(formData.selectedOrgId, token);
+        console.log('Joining existing organization');
+        orgData = await joinOrganization(formData.selectedOrgId);
         isPrimaryUser = false;
       }
 
+      console.log('Organization operation successful:', orgData);
       toast({
         title: "Success",
         description: formData.isNewOrg ? "Organization created successfully" : "Joined organization successfully",

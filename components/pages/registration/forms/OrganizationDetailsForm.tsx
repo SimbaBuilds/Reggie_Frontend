@@ -18,20 +18,27 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
     handleRadioChange,
     checkExistingOrganization,
     handleSubmit,
-  } = useOrganizationDetails();
+  } = useOrganizationDetails(registrationState);
 
   useEffect(() => {
-    if (!formData.isNewOrg && formData.name) {
-      checkExistingOrganization(formData.name);
+    if (!formData.isNewOrg && (formData.name || formData.selectedOrgId)) {
+      checkExistingOrganization(formData.name, formData.selectedOrgId ?? 0);
     }
-  }, [formData.isNewOrg, formData.name, checkExistingOrganization]);
+  }, [formData.isNewOrg, formData.name, formData.selectedOrgId, checkExistingOrganization]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
+    console.log('Form submission triggered'); // Add this line
     e.preventDefault();
+    console.log('Starting organization registration process...');
+    console.log('Form data:', formData);
     try {
+      console.log('Submitting organization details...');
       const { orgData, isPrimaryUser } = await handleSubmit(e);
+      console.log('Organization registration successful:', orgData);
+      console.log('Is primary user:', isPrimaryUser);
       onSubmit({ ...orgData, isPrimaryUser });
     } catch (error) {
+      console.error('Error in organization registration:', error);
       // Error is already handled in the hook
     }
   };
@@ -114,13 +121,17 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
 
           <div className="space-y-2">
             <Label htmlFor="selectedOrgId">Select Existing Organization</Label>
-            <Select name="selectedOrgId" value={formData.selectedOrgId} onValueChange={(value) => handleRadioChange('selectedOrgId', value)}>
+            <Select 
+              name="selectedOrgId" 
+              value={formData.selectedOrgId?.toString()} 
+              onValueChange={(value) => handleRadioChange('selectedOrgId', value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select an organization" />
               </SelectTrigger>
               <SelectContent>
                 {existingOrganizations.map((org) => (
-                  <SelectItem key={org.id} value={org.id}>
+                  <SelectItem key={org.id} value={org.id.toString()}>
                     {org.name} ({org.type}, {org.size})
                   </SelectItem>
                 ))}

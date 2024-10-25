@@ -23,7 +23,7 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
   {
     key: 'planSelection',
     label: 'Plan Selection',
-    isCompleted: (state) => Boolean(state.organization.plan?.name),
+    isCompleted: (state) => Boolean(state.organization.plan?.type),
     isSkippable: (state) => !state.user.isPrimaryUser,
   },
   {
@@ -62,14 +62,14 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
     key: 'templateResponses',
     label: 'Email Templates',
     isCompleted: (state) => state.preferences.templateCount > 0,
-    isSkippable: (state) => Boolean(!state.organization.plan?.name?.includes('assistant')),
+    isSkippable: (state) => Boolean(!state.organization.plan?.type?.includes('assistant')),
   },
   {
     key: 'userAccounts',
     label: 'Additional Users',
     isCompleted: (state) => state.preferences.currentUserCount > 0,
     isSkippable: (state) => !state.user.isPrimaryUser || 
-      Boolean(state.organization.plan?.name?.includes('digitize')),
+      Boolean(state.organization.plan?.type?.includes('digitize')),
   },
   {
     key: 'onboardingTutorial',

@@ -1,4 +1,7 @@
 // Replace enums with const objects and union types
+
+
+//region Organization
 export const SubscriptionType = {
   Free: "free",
   DigitizeOnly: "digitize_only",
@@ -19,6 +22,59 @@ export const OrganizationSize = {
 } as const;
 export type OrganizationSize = typeof OrganizationSize[keyof typeof OrganizationSize];
 
+export interface OrgData {
+  id?: number; // Make id optional
+  name: string;
+  created_at?: string; // Make created_at optional
+  type: string;
+  size: string;
+  created_by?: number; // Make created_by optional
+  rosters_uploaded?: boolean; // Make optional
+  records_digitized?: boolean; // Make optional
+  records_organized?: boolean; // Make optional
+  transcripts_uploaded?: boolean; // Make optional
+  email_labels_created?: boolean; // Make optional
+  email_template_created?: boolean; // Make optional
+  subscription_type?: SubscriptionType; // Make optional
+}
+
+  
+  export interface ExistingOrganization {
+  id: number;
+  name: string;
+  type: string;
+  size: string;
+  }
+  
+
+  export interface OrganizationDetailsFormData {
+    name: string;
+    type: string;
+    size: string;
+    created_by: number;
+    isNewOrg?: boolean;
+    selectedOrgId?: number;
+    orgId?: number;
+  }
+  
+  
+  export interface PlanData {
+    type: string;
+  }
+  
+  export interface OrgCreateData {
+    name: string;
+    type: string;
+    size: string;
+    created_by: number;
+  }
+  
+
+//endregion
+
+
+
+
 export const ProcessingStatus = {
   Pending: "pending",
   Processing: "processing",
@@ -35,21 +91,7 @@ export const JobStatus = {
 } as const;
 export type JobStatus = typeof JobStatus[keyof typeof JobStatus];
 
-export interface OrgData {
-  id?: number; // Make id optional
-  name: string;
-  created_at?: string; // Make created_at optional
-  type: OrganizationType;
-  size: OrganizationSize;
-  created_by?: number; // Make created_by optional
-  rosters_uploaded?: boolean; // Make optional
-  records_digitized?: boolean; // Make optional
-  records_organized?: boolean; // Make optional
-  transcripts_uploaded?: boolean; // Make optional
-  email_labels_created?: boolean; // Make optional
-  email_template_created?: boolean; // Make optional
-  subscription_type?: SubscriptionType; // Make optional
-}
+
 
 
 export interface UserData {
@@ -154,39 +196,8 @@ export interface EmailThreadInfo {
 
   
 export interface UserResponse extends UserData {
-id: string;
+id: number;
 message: string;
 }
 
 
-
-export interface PlanData {
-name: SubscriptionType;
-price: number;
-}
-
-export interface ExistingOrganization {
-id: string;
-name: string;
-type: OrganizationType;
-size: OrganizationSize;
-}
-
-// Add or update these interfaces
-export interface OrgData {
-  name: string;
-  type: OrganizationType;
-  size: OrganizationSize;
-}
-
-export interface OrganizationDetailsFormData extends OrgData {
-  isNewOrg: boolean;
-  selectedOrgId?: string;
-  orgId?: string; // Add this line
-}
-
-
-
-export interface PlanData {
-  subscription_type: SubscriptionType;
-}

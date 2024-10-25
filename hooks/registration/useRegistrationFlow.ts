@@ -6,6 +6,7 @@ import { OrgData, PlanData, UserResponse } from '@/types/types';
 
 export interface RegistrationState {
   user:{
+    id: number;
     email: string;
     first_name: string;
     last_name: string;
@@ -42,6 +43,7 @@ export interface RegistrationState {
 export function useRegistrationFlow(initialStep?: string | null) {
   const [registrationState, setRegistrationState] = useState<RegistrationState>(() => ({
     user: {
+      id: 0,
       email: '',
       first_name: '',
       last_name: '',
@@ -97,6 +99,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
           completed: true 
       },
       user: {
+        id: signUpResult.id,
         email: signUpResult.email,
         first_name: signUpResult.first_name,
         last_name: signUpResult.last_name,
