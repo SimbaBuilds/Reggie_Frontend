@@ -74,8 +74,13 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
           </div>
 
           <div className="space-y-2">
-            <Label>Organization Type</Label>
-            <RadioGroup value={formData.type} onValueChange={(value) => handleRadioChange('type', value)}>
+            <Label htmlFor="type">Organization Type</Label>
+            <RadioGroup 
+              value={formData.type} 
+              onValueChange={(value) => handleRadioChange('type', value)}
+              name="type"
+              required
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="school" id="school" />
                 <Label htmlFor="school">School</Label>
@@ -92,8 +97,13 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
           </div>
 
           <div className="space-y-2">
-            <Label>Organization Size</Label>
-            <RadioGroup value={formData.size} onValueChange={(value) => handleRadioChange('size', value)}>
+            <Label htmlFor="size">Organization Size</Label>
+            <RadioGroup 
+              value={formData.size} 
+              onValueChange={(value) => handleRadioChange('size', value)}
+              name="size"
+              required
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="small" id="small" />
                 <Label htmlFor="small">Small (Less than 1000 people)</Label>
