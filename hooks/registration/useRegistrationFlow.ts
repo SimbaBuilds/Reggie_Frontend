@@ -5,57 +5,74 @@ import { useRegistrationSteps } from './useRegistrationSteps';
 import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/types';
 import { useInitialRegistration } from './sub-hooks/useInitialRegistration';
 import { useOrganizationDetails } from './sub-hooks/useOrganizationDetails';
-import { UserData, OrgData, PlanData, UserResponse } from '@/types/types';
+import { OrgData, PlanData, UserResponse } from '@/types/types';
 import { DataUpload } from './sub-hooks/useDataUpload';
 
 export interface RegistrationState {
-  user: UserData;
-  organization: OrgData;
-  plan: PlanData;
-  googleIntegration: boolean;
-  dataUpload: DataUpload;
-  googleDriveSetup: boolean;
-  digitizationMethod: 'consistentFirstPage' | 'coverPage' | 'manualOrganization' | null;
-  transcriptHandling: boolean;
-  emailConfiguration: boolean;
-  templateResponses: string[];
-  userAccounts: string[];
-  isOrganizationPrimaryUser: boolean;
-  onboardingTutorialCompleted: boolean;
+  currentStep: {
+    key: string;
+    completed: boolean;
+  };
+  organization: {
+    id?: number;
+    name: string;
+    type?: 'school' | 'district' | null;
+    size?: 'small' | 'large' | null;
+    isPrimaryUser: boolean;
+    plan?: PlanData;
+    userAccounts: number;
+  };
+  integrations: {
+    googleConnected: boolean;
+    driveConfigured: boolean;
+    csvUploaded: {
+      studentList: boolean;
+      staffList: boolean;
+    };
+    emailLabelsCreated: boolean;
+    transcriptBatchUploaded: boolean;
+  };
+  preferences: {
+    digitizationMethod: 'consistentFirstPage' | 'coverPage' | 'manualOrganization' | null;
+    hasTranscripts: boolean;
+    emailAlias: boolean;
+    templateCount: number;
+    maxUsers: number;
+    currentUserCount: number;
+  };
 }
 
 export function useRegistrationFlow(initialStep?: string | null) {
   const [registrationState, setRegistrationState] = useState<RegistrationState>(() => ({
-    user: { email: '', password: '', first_name: '', last_name: '', email_alias: '' },
+    currentStep: {
+      key: initialStep || '',
+      completed: false,
+    },
     organization: {
-      id: 0, // or undefined if you prefer
       name: '',
-      created_at: '', // or new Date().toISOString() if you want a default
-      type: OrganizationType.School,
-      size: OrganizationSize.Small,
-      created_by: 0, // or undefined
-      rosters_uploaded: false,
-      records_digitized: false,
-      records_organized: false,
-      transcripts_uploaded: false,
-      email_labels_created: false,
-      email_template_created: false,
-      subscription_type: SubscriptionType.Free
+      type: null,
+      size: null,
+      isPrimaryUser: false,
+      userAccounts: 0,
     },
-    plan: { name: SubscriptionType.Free, price: 0 },
-    googleIntegration: false,
-    dataUpload: {
-      studentList: false,
-      staffList: false,
+    integrations: {
+      googleConnected: false,
+      driveConfigured: false,
+      csvUploaded: {
+        studentList: false,
+        staffList: false,
+      },
+      emailLabelsCreated: false,
+      transcriptBatchUploaded: false,
     },
-    googleDriveSetup: false,
-    digitizationMethod: null,
-    transcriptHandling: false,
-    emailConfiguration: false,
-    templateResponses: [],
-    userAccounts: [],
-    isOrganizationPrimaryUser: false,
-    onboardingTutorialCompleted: false,
+    preferences: {
+      digitizationMethod: null,
+      hasTranscripts: false,
+      emailAlias: false,
+      templateCount: 0,
+      maxUsers: 1,
+      currentUserCount: 1,
+    },
   }));
 
   const { getToken } = useAuth();
@@ -78,7 +95,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
 
   const handleInitialSignUp = async (signUpResult: UserResponse) => {
     try {
-      updateRegistrationState({ user: signUpResult });
+      updateRegistrationState({ currentStep: { key: 'initialSignUp', completed: true } });
     } catch (error) {
       console.error('Error during initial sign up:', error);
       throw error;
@@ -88,13 +105,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
   const handleOrganizationDetails = async (orgData: OrgData): Promise<void> => {
     try {
       await organizationDetails.createNewOrganization(orgData);
-      setRegistrationState(prevState => ({
-        ...prevState,
-        organization: {
-          ...prevState.organization,
-          ...orgData,
-        },
-      }));
+      updateRegistrationState({ organization: { ...registrationState.organization, isPrimaryUser: true } });
     } catch (error) {
       console.error('Error setting organization details:', error);
       throw error;
@@ -115,7 +126,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
   const handlePlanSelection = async (planData: PlanData) => {
     try {
       await organizationDetails.setPlan(planData);
-      updateRegistrationState({ plan: planData });
+      updateRegistrationState({ currentStep: { key: 'planSelection', completed: true } });
     } catch (error) {
       console.error('Error setting plan:', error);
       throw error;
@@ -123,23 +134,23 @@ export function useRegistrationFlow(initialStep?: string | null) {
   };
 
   const handleGoogleIntegration = (integrated: boolean) => {
-    updateRegistrationState({ googleIntegration: integrated });
+    updateRegistrationState({ integrations: { ...registrationState.integrations, googleConnected: integrated } });
   };
 
   const handleDataUpload = (uploaded: { studentList: boolean; staffList: boolean }) => {
-    updateRegistrationState({ dataUpload: uploaded });
+    updateRegistrationState({ integrations: { ...registrationState.integrations, driveConfigured: true } });
   };
 
   const handleTranscriptHandling = (configured: boolean) => {
-    updateRegistrationState({ transcriptHandling: configured });
+    updateRegistrationState({ preferences: { ...registrationState.preferences, hasTranscripts: configured } });
   };
 
   const handleEmailConfiguration = (configured: boolean) => {
-    updateRegistrationState({ emailConfiguration: configured });
+    updateRegistrationState({ currentStep: { key: 'emailConfiguration', completed: true } });
   };
 
   const handleUserAccounts = (accounts: string[]) => {
-    updateRegistrationState({ userAccounts: accounts });
+    updateRegistrationState({ currentStep: { key: 'userAccounts', completed: true } });
   };
 
   const finalizeRegistration = async () => {
@@ -194,19 +205,19 @@ export function useRegistrationFlow(initialStep?: string | null) {
   }, [currentStep.key, goToNextStep]);
 
   const handleGoogleDriveSetup = (setup: boolean) => {
-    updateRegistrationState({ googleDriveSetup: setup });
+    updateRegistrationState({ integrations: { ...registrationState.integrations, driveConfigured: setup } });
   };
 
   const handleDigitizationPreferences = (method: 'consistentFirstPage' | 'coverPage' | 'manualOrganization') => {
-    updateRegistrationState({ digitizationMethod: method });
+    updateRegistrationState({ preferences: { ...registrationState.preferences, digitizationMethod: method } });
   };
 
   const handleTemplateResponses = (templates: string[]) => {
-    updateRegistrationState({ templateResponses: templates });
+    updateRegistrationState({ currentStep: { key: 'templateResponses', completed: true } });
   };
 
   const handleOnboardingTutorial = (completed: boolean) => {
-    updateRegistrationState({ onboardingTutorialCompleted: completed });
+    updateRegistrationState({ currentStep: { key: 'onboardingTutorial', completed: completed } });
   };
 
   return {

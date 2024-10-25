@@ -1,73 +1,81 @@
 import { useState } from 'react'
 import { RegistrationState } from './useRegistrationFlow'
-import { SubscriptionType } from '../../types/types'
 
 interface RegistrationStep {
   key: string;
   label: string;
   isCompleted: (state: RegistrationState) => boolean;
+  isSkippable?: (state: RegistrationState) => boolean;  // This is fine as optional
 }
 
 const REGISTRATION_STEPS: RegistrationStep[] = [
   {
     key: 'initialSignUp',
-    label: 'Initial Sign Up',
-    isCompleted: (state) => !!state.user.email && !!state.user.password && !!state.user.first_name && !!state.user.last_name,
+    label: 'Initial Registration',
+    isCompleted: (state) => state.currentStep.completed,
   },
   {
     key: 'organizationDetails',
-    label: 'Organization Details',
-    isCompleted: (state) => !!state.organization.name && !!state.organization.type && !!state.organization.size,
+    label: 'Organization Setup',
+    isCompleted: (state) => Boolean(state.organization.name && 
+      state.organization.type && 
+      state.organization.size),
   },
   {
     key: 'planSelection',
     label: 'Plan Selection',
-    isCompleted: (state) => !!state.plan.name,
+    isCompleted: (state) => Boolean(state.organization.plan?.name),
+    isSkippable: (state) => !state.organization.isPrimaryUser,
   },
   {
     key: 'googleIntegration',
-    label: 'Google Integration',
-    isCompleted: (state) => state.googleIntegration,
+    label: 'Google Account Integration',
+    isCompleted: (state) => state.integrations.googleConnected,
   },
   {
     key: 'dataUpload',
-    label: 'Data Upload',
-    isCompleted: (state) => state.dataUpload.studentList && (state.dataUpload.staffList || !state.organization.size),
+    label: 'Student & Staff Lists',
+    isCompleted: (state) => state.integrations.csvUploaded.studentList,
+    isSkippable: (state) => !state.organization.isPrimaryUser,
   },
   {
     key: 'googleDriveSetup',
-    label: 'Google Drive Setup',
-    isCompleted: (state) => state.googleDriveSetup,
+    label: 'Drive Structure Setup',
+    isCompleted: (state) => state.integrations.driveConfigured,
   },
   {
     key: 'digitizationPreferences',
-    label: 'Digitization Preferences',
-    isCompleted: (state) => !!state.digitizationMethod,
+    label: 'Record Identification Method',
+    isCompleted: (state) => Boolean(state.preferences.digitizationMethod),
   },
   {
     key: 'emailConfiguration',
-    label: 'Email Configuration',
-    isCompleted: (state) => state.emailConfiguration && state.organization.email_labels_created,
+    label: 'Email Setup',
+    isCompleted: (state) => state.integrations.emailLabelsCreated,
   },
   {
     key: 'transcriptHandling',
-    label: 'Transcript Handling',
-    isCompleted: (state) => state.transcriptHandling || state.plan.name === SubscriptionType.Free,
+    label: 'Transcript Batch Upload',
+    isCompleted: (state) => state.integrations.transcriptBatchUploaded || !state.preferences.hasTranscripts,
+    isSkippable: (state) => !state.preferences.hasTranscripts,
   },
   {
     key: 'templateResponses',
-    label: 'Template Responses',
-    isCompleted: (state) => state.templateResponses.length > 0 || state.plan.name === SubscriptionType.Free,
+    label: 'Email Templates',
+    isCompleted: (state) => state.preferences.templateCount > 0,
+    isSkippable: (state) => Boolean(!state.organization.plan?.name?.includes('assistant')),
   },
   {
     key: 'userAccounts',
-    label: 'User Accounts',
-    isCompleted: (state) => state.userAccounts.length > 0 || !state.isOrganizationPrimaryUser,
+    label: 'Additional Users',
+    isCompleted: (state) => state.preferences.currentUserCount > 0,
+    isSkippable: (state) => !state.organization.isPrimaryUser || 
+      Boolean(state.organization.plan?.name?.includes('digitize')),
   },
   {
     key: 'onboardingTutorial',
-    label: 'Onboarding Tutorial',
-    isCompleted: (state) => state.onboardingTutorialCompleted,
+    label: 'Getting Started',
+    isCompleted: (state) => state.currentStep.completed,
   },
 ];
 
@@ -85,21 +93,36 @@ export function useRegistrationSteps(registrationState: RegistrationState, initi
 
   const goToNextStep = () => {
     if (!isLastStep) {
-      setCurrentStepIndex((prev) => prev + 1);
+      let nextIndex = currentStepIndex + 1;
+      // Skip steps that are skippable based on current state
+      while (nextIndex < REGISTRATION_STEPS.length && 
+             REGISTRATION_STEPS[nextIndex].isSkippable?.(registrationState)) {
+        nextIndex++;
+      }
+      setCurrentStepIndex(nextIndex);
     }
   };
 
   const goToPreviousStep = () => {
     if (currentStepIndex > 0) {
-      setCurrentStepIndex((prev) => prev - 1);
+      let prevIndex = currentStepIndex - 1;
+      // Skip steps that are skippable based on current state
+      while (prevIndex >= 0 && 
+             REGISTRATION_STEPS[prevIndex].isSkippable?.(registrationState)) {
+        prevIndex--;
+      }
+      setCurrentStepIndex(prevIndex);
     }
   };
 
   const calculateProgress = () => {
-    const completedSteps = REGISTRATION_STEPS.filter((step) =>
-      step.isCompleted(registrationState)
+    const relevantSteps = REGISTRATION_STEPS.filter(
+      step => !step.isSkippable?.(registrationState)
+    );
+    const completedSteps = relevantSteps.filter(
+      step => step.isCompleted(registrationState)
     ).length;
-    return Math.round((completedSteps / REGISTRATION_STEPS.length) * 100);
+    return Math.round((completedSteps / relevantSteps.length) * 100);
   };
 
   const setCurrentStepByKey = (stepKey: string) => {
@@ -119,6 +142,8 @@ export function useRegistrationSteps(registrationState: RegistrationState, initi
     setCurrentStepByKey,
   };
 }
+
+
 
 
 
