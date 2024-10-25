@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { useOrganizationDetails } from '@/hooks/registration/sub-hooks/useOrganizationDetails'
-import { StepProps } from '../RegistrationPage'
+import { StepProps } from '@/components/pages/registration/RegistrationPage'
+import { useDebounce } from '@/hooks/useDebounce';
 
 export function OrganizationDetailsForm({ onSubmit, registrationState }: StepProps) {
   const {
@@ -20,11 +21,14 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
     handleSubmit,
   } = useOrganizationDetails(registrationState);
 
+  const debouncedOrgName = useDebounce(formData.name, 300);
+  const debouncedOrgId = useDebounce(formData.selectedOrgId, 300);
+
   useEffect(() => {
-    if (!formData.isNewOrg && (formData.name || formData.selectedOrgId)) {
-      checkExistingOrganization(formData.name, formData.selectedOrgId ?? 0);
+    if (!formData.isNewOrg && (debouncedOrgName || debouncedOrgId)) {
+      checkExistingOrganization(debouncedOrgName, debouncedOrgId ?? 0);
     }
-  }, [formData.isNewOrg, formData.name, formData.selectedOrgId, checkExistingOrganization]);
+  }, [formData.isNewOrg, debouncedOrgName, debouncedOrgId, checkExistingOrganization]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,6 +114,9 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
               </div>
             </RadioGroup>
           </div>
+          <Button type="submit" disabled={!formData.isNewOrg || isLoading || (existingOrganizations.length === 0)}>
+        {isLoading ? 'Submitting...' : 'Submit'}
+      </Button>
         </>
       ) : (
         <>
@@ -131,17 +138,41 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
               id="selectedOrgId"
               name="selectedOrgId"
               value={formData.selectedOrgId?.toString() || ''}
-              onChange={(e) => handleInputChange(e)}
+              onChange={handleInputChange}
               placeholder="Enter organization ID"
+              type="number"
               required
             />
           </div>
+
+          {existingOrganizations.length > 0 && (
+            <div className="space-y-2">
+              <Label>Matching Organizations</Label>
+              <ul className="list-disc pl-5">
+                {existingOrganizations.map((org) => (
+                  <li key={org.id}>
+                    {org.name} (ID: {org.id})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="space-y-2">
+            <Button
+              type="button"
+              onClick={() => checkExistingOrganization(formData.name, formData.selectedOrgId ?? 0)}
+              disabled={!formData.name || !formData.selectedOrgId}
+              className="w-full mb-4"
+            >
+              Join Organization
+            </Button>
+          </div>
+
         </>
       )}
 
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? 'Submitting...' : 'Submit'}
-      </Button>
+
+
     </form>
   )
 }

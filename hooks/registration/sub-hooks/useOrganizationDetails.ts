@@ -20,10 +20,13 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log(`Input changed: ${name} = ${value}`);
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: name === 'selectedOrgId' ? (value ? parseInt(value, 10) : null) : value 
+    }));
   };
 
   const handleRadioChangeNewExisting = (name: string, value: string) => {
@@ -42,6 +45,10 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
 
   const checkExistingOrganization = async (name: string, id: number) => {
     console.log(`Checking existing organizations for name: ${name} and id: ${id}`);
+    if (!name && !id) {
+      setExistingOrganizations([]);
+      return;
+    }
     try {
       const data = await checkExistingOrganizations(name, id);
       console.log('Existing organizations found:', data);
@@ -53,6 +60,7 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
         description: "Failed to check existing organizations",
         variant: "destructive",
       });
+      setExistingOrganizations([]);
     }
   };
 
@@ -84,6 +92,9 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
         isPrimaryUser = true;
       } else {
         if (!formData.selectedOrgId) throw new Error('No organization selected');
+        const matchingOrg = existingOrganizations.find(org => org.id === formData.selectedOrgId);
+        if (!matchingOrg) throw new Error('Selected organization not found');
+        
         console.log('Joining existing organization');
         orgData = await joinOrganization(formData.selectedOrgId);
         isPrimaryUser = false;
