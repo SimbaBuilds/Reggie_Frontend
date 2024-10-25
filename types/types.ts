@@ -1,7 +1,6 @@
-// Replace enums with const objects and union types
+import { RegistrationState } from '@/hooks/registration/useRegistrationFlow';
 
-
-//region Organization
+//#region Organization
 export const SubscriptionType = {
   Free: "free",
   DigitizeOnly: "digitize_only",
@@ -38,7 +37,6 @@ export interface OrgData {
   subscription_type?: SubscriptionType; // Make optional
 }
 
-  
   export interface ExistingOrganization {
   id: number;
   name: string;
@@ -46,7 +44,6 @@ export interface OrgData {
   size: string;
   }
   
-
   export interface OrganizationDetailsFormData {
     name: string;
     type: string;
@@ -56,7 +53,6 @@ export interface OrgData {
     selectedOrgId?: number;
     orgId?: number;
   }
-  
   
   export interface PlanData {
     type: string;
@@ -69,8 +65,7 @@ export interface OrgData {
     created_by: number;
   }
   
-
-//endregion
+//#endregion
 
 
 
@@ -102,6 +97,12 @@ export interface UserData {
   email_alias?: string;
 }
 
+
+export interface UserResponse extends UserData {
+  id: number;
+  message: string;
+  }
+  
 
 export interface Student {
   id?: number;
@@ -195,9 +196,7 @@ export interface EmailThreadInfo {
 
 
   
-export interface UserResponse extends UserData {
-id: number;
-message: string;
-}
 
 
+
+export type { RegistrationState };

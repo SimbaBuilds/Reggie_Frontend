@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/auth';
 import { OrganizationDetailsFormData, ExistingOrganization, OrganizationType, OrganizationSize, PlanData, OrgData, OrgCreateData } from '@/types/types';
 import { checkExistingOrganizations, createOrganization, joinOrganization } from '../../../services/fastapi_backend/org_api';
 import { useToast } from '@/hooks/use-toast';
-import { RegistrationState } from '../useRegistrationFlow';
+import { RegistrationState } from '@/hooks/registration/useRegistrationFlow';
 
 
 
@@ -62,7 +62,6 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
       let isPrimaryUser: boolean;
 
       if (formData.isNewOrg) {
-        console.log('Creating new organization');
         if (!registrationState.user?.id) {
           throw new Error('User ID is not available');
         }
