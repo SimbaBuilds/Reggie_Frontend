@@ -1,26 +1,23 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/auth';
-import { useRouter } from 'next/navigation';
 import { useRegistrationSteps } from './useRegistrationSteps';
-import { OrganizationType, OrganizationSize, SubscriptionType } from '@/types/types';
-import { useInitialRegistration } from './sub-hooks/useInitialRegistration';
-import { useOrganizationDetails } from './sub-hooks/useOrganizationDetails';
 import { OrgData, PlanData, UserResponse } from '@/types/types';
-import { DataUpload } from './sub-hooks/useDataUpload';
+
 
 export interface RegistrationState {
+  user:{
+    email: string;
+    first_name: string;
+    last_name: string;
+    isPrimaryUser: boolean;
+  }
+  organization: {
+    name: string;
+    plan: PlanData;
+  }
   currentStep: {
     key: string;
     completed: boolean;
-  };
-  organization: {
-    id?: number;
-    name: string;
-    type?: 'school' | 'district' | null;
-    size?: 'small' | 'large' | null;
-    isPrimaryUser: boolean;
-    plan?: PlanData;
-    userAccounts: number;
   };
   integrations: {
     googleConnected: boolean;
@@ -44,16 +41,19 @@ export interface RegistrationState {
 
 export function useRegistrationFlow(initialStep?: string | null) {
   const [registrationState, setRegistrationState] = useState<RegistrationState>(() => ({
+    user: {
+      email: '',
+      first_name: '',
+      last_name: '',
+      isPrimaryUser: true,
+    },
+    organization:{
+      name: '',
+      plan: {} as PlanData
+    },
     currentStep: {
       key: initialStep || '',
       completed: false,
-    },
-    organization: {
-      name: '',
-      type: null,
-      size: null,
-      isPrimaryUser: false,
-      userAccounts: 0, 
     },
     integrations: {
       googleConnected: false,
@@ -76,11 +76,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
   }));
 
   const { getToken } = useAuth();
-  const initialRegistration = useInitialRegistration();
-  const organizationDetails = useOrganizationDetails();
-  const router = useRouter();
   const {
-    REGISTRATION_STEPS,
     currentStep,
     isLastStep,
     goToNextStep,
@@ -99,34 +95,41 @@ export function useRegistrationFlow(initialStep?: string | null) {
         currentStep: { 
           key: 'initialSignUp', 
           completed: true 
+      },
+      user: {
+        email: signUpResult.email,
+        first_name: signUpResult.first_name,
+        last_name: signUpResult.last_name,
+        isPrimaryUser: true,
       }
     });
   };
 
-  const handleOrganizationDetails = async (orgData: OrgData): Promise<void> => {
+  const handleOrganizationDetails = async (orgData: OrgData & { isPrimaryUser: boolean }): Promise<void> => {
     try {
-      await organizationDetails.createNewOrganization(orgData);
-      updateRegistrationState({ organization: { ...registrationState.organization, isPrimaryUser: true } });
+      updateRegistrationState({
+        organization: {
+          name: orgData.name,
+          plan: registrationState.organization.plan,
+        },
+        user: {
+          ...registrationState.user,
+          isPrimaryUser: orgData.isPrimaryUser,
+        },
+        currentStep: { 
+          key: 'organizationDetails', 
+          completed: true 
+        },
+      });
+      goToNextStep();
     } catch (error) {
       console.error('Error setting organization details:', error);
       throw error;
     }
   };
 
-  const handleJoinExistingOrganization = async (organizationId: string) => {
-    try {
-      await organizationDetails.joinExistingOrganization(organizationId);
-      // Update registration state with joined organization details
-      // You might need to fetch the organization details after joining
-    } catch (error) {
-      console.error('Error joining existing organization:', error);
-      throw error;
-    }
-  };
-
   const handlePlanSelection = async (planData: PlanData) => {
     try {
-      await organizationDetails.setPlan(planData);
       updateRegistrationState({ currentStep: { key: 'planSelection', completed: true } });
     } catch (error) {
       console.error('Error setting plan:', error);
@@ -231,7 +234,6 @@ export function useRegistrationFlow(initialStep?: string | null) {
     finalizeRegistration,
     handleInitialSignUp,
     handleOrganizationDetails,
-    handleJoinExistingOrganization,
     handlePlanSelection,
     handleGoogleIntegration,
     handleDataUpload,

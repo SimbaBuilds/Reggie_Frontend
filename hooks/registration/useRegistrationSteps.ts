@@ -18,14 +18,13 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
     key: 'organizationDetails',
     label: 'Organization Setup',
     isCompleted: (state) => Boolean(state.organization.name && 
-      state.organization.type && 
-      state.organization.size),
+      state.organization.plan),
   },
   {
     key: 'planSelection',
     label: 'Plan Selection',
     isCompleted: (state) => Boolean(state.organization.plan?.name),
-    isSkippable: (state) => !state.organization.isPrimaryUser,
+    isSkippable: (state) => !state.user.isPrimaryUser,
   },
   {
     key: 'googleIntegration',
@@ -36,7 +35,7 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
     key: 'dataUpload',
     label: 'Student & Staff Lists',
     isCompleted: (state) => state.integrations.csvUploaded.studentList,
-    isSkippable: (state) => !state.organization.isPrimaryUser,
+    isSkippable: (state) => !state.user.isPrimaryUser,
   },
   {
     key: 'googleDriveSetup',
@@ -69,7 +68,7 @@ const REGISTRATION_STEPS: RegistrationStep[] = [
     key: 'userAccounts',
     label: 'Additional Users',
     isCompleted: (state) => state.preferences.currentUserCount > 0,
-    isSkippable: (state) => !state.organization.isPrimaryUser || 
+    isSkippable: (state) => !state.user.isPrimaryUser || 
       Boolean(state.organization.plan?.name?.includes('digitize')),
   },
   {

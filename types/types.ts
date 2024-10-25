@@ -36,20 +36,20 @@ export const JobStatus = {
 export type JobStatus = typeof JobStatus[keyof typeof JobStatus];
 
 export interface OrgData {
-  id: number;
+  id?: number; // Make id optional
   name: string;
-  created_at: string;
+  created_at?: string; // Make created_at optional
   type: OrganizationType;
   size: OrganizationSize;
-  created_by: number;
-  rosters_uploaded: boolean;
-  records_digitized: boolean;
-  records_organized: boolean;
-  transcripts_uploaded: boolean;
-  email_labels_created: boolean;
-  email_template_created: boolean;
-  subscription_type: SubscriptionType;
-  }
+  created_by?: number; // Make created_by optional
+  rosters_uploaded?: boolean; // Make optional
+  records_digitized?: boolean; // Make optional
+  records_organized?: boolean; // Make optional
+  transcripts_uploaded?: boolean; // Make optional
+  email_labels_created?: boolean; // Make optional
+  email_template_created?: boolean; // Make optional
+  subscription_type?: SubscriptionType; // Make optional
+}
 
 
 export interface UserData {
@@ -170,4 +170,23 @@ id: string;
 name: string;
 type: OrganizationType;
 size: OrganizationSize;
+}
+
+// Add or update these interfaces
+export interface OrgData {
+  name: string;
+  type: OrganizationType;
+  size: OrganizationSize;
+}
+
+export interface OrganizationDetailsFormData extends OrgData {
+  isNewOrg: boolean;
+  selectedOrgId?: string;
+  orgId?: string; // Add this line
+}
+
+
+
+export interface PlanData {
+  subscription_type: SubscriptionType;
 }

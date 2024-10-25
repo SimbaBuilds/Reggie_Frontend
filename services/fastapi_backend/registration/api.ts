@@ -41,9 +41,12 @@ export async function createOrganization(orgData: OrgData, token: string): Promi
     body: JSON.stringify(orgData),
   });
 
-  if (!response.ok) throw new Error('Failed to create organization');
-  const data = await response.json();
-  return data.data;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || `Failed to create organization with status ${response.status}`);
+  }
+
+  return await response.json();
 }
 
 export async function joinOrganization(organizationId: string, token: string): Promise<OrgData> {
@@ -56,9 +59,12 @@ export async function joinOrganization(organizationId: string, token: string): P
     body: JSON.stringify({ organization_id: organizationId }),
   });
 
-  if (!response.ok) throw new Error('Failed to join organization');
-  const data = await response.json();
-  return data.data;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || `Failed to join organization with status ${response.status}`);
+  }
+
+  return await response.json();
 }
 
 export async function setPlan(planData: PlanData, token: string): Promise<PlanData> {

@@ -1,88 +1,46 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
-import { StepProps } from '../RegistrationPage'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useOrganizationDetails } from '@/hooks/registration/sub-hooks/useOrganizationDetails'
-import { OrgData, ExistingOrganization, PlanData } from '@/types/types';
-
+import { StepProps } from '../RegistrationPage'
 
 export function OrganizationDetailsForm({ onSubmit, registrationState }: StepProps) {
-  const [name, setName] = useState(registrationState.organization.name)
-  const [type, setType] = useState<'school' | 'district' | 'other'>(registrationState.organization.type || 'school')
-  const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size || 'small')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isNewOrg, setIsNewOrg] = useState(true)
-  const [selectedOrg, setSelectedOrg] = useState('')
-  const [orgId, setOrgId] = useState('')
-  const { toast } = useToast()
-
   const {
-    organizationData,
+    formData,
     existingOrganizations,
+    isLoading,
+    handleInputChange,
+    handleRadioChange,
     checkExistingOrganization,
-    createNewOrganization,
-    joinExistingOrganization,
-  } = useOrganizationDetails()
+    handleSubmit,
+  } = useOrganizationDetails();
 
   useEffect(() => {
-    if (!isNewOrg) {
-      checkExistingOrganization(name)
+    if (!formData.isNewOrg && formData.name) {
+      checkExistingOrganization(formData.name);
     }
-  }, [isNewOrg, name, checkExistingOrganization])
+  }, [formData.isNewOrg, formData.name, checkExistingOrganization]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Form submitted. IsNewOrg:", isNewOrg, "Name:", name)
-
-    if (!name) {
-      toast({
-        title: "Error",
-        description: "Please enter an organization name.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (isNewOrg && (!type || !size)) {
-      toast({
-        title: "Error",
-        description: "Please select organization type and size.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsSubmitting(true)
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      if (isNewOrg) {
-        await createNewOrganization({ name, type, size } as OrgData)
-      } else {
-        await joinExistingOrganization(selectedOrg)
-      }
-      onSubmit(organizationData)
+      const { orgData, isPrimaryUser } = await handleSubmit(e);
+      onSubmit({ ...orgData, isPrimaryUser });
     } catch (error) {
-      console.error("Error submitting form:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
+      // Error is already handled in the hook
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={onFormSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="org-type">Organization Type</Label>
-        <RadioGroup value={isNewOrg ? "new" : "existing"} onValueChange={(value) => setIsNewOrg(value === "new")}>
+        <RadioGroup value={formData.isNewOrg ? "new" : "existing"} onValueChange={(value) => handleRadioChange('isNewOrg', value === "new" ? "true" : "false")}>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="new" id="new" />
             <Label htmlFor="new">New Organization</Label>
@@ -94,14 +52,15 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
         </RadioGroup>
       </div>
 
-      {isNewOrg ? (
+      {formData.isNewOrg ? (
         <>
           <div className="space-y-2">
-            <Label htmlFor="org-name">Organization Name</Label>
+            <Label htmlFor="name">Organization Name</Label>
             <Input
-              id="org-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
               placeholder="Enter your organization name"
               required
             />
@@ -109,7 +68,7 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
 
           <div className="space-y-2">
             <Label>Organization Type</Label>
-            <RadioGroup value={type} onValueChange={(value: 'school' | 'district' | 'other') => setType(value)}>
+            <RadioGroup value={formData.type} onValueChange={(value) => handleRadioChange('type', value)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="school" id="school" />
                 <Label htmlFor="school">School</Label>
@@ -127,7 +86,7 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
 
           <div className="space-y-2">
             <Label>Organization Size</Label>
-            <RadioGroup value={size} onValueChange={(value: 'small' | 'large') => setSize(value)}>
+            <RadioGroup value={formData.size} onValueChange={(value) => handleRadioChange('size', value)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="small" id="small" />
                 <Label htmlFor="small">Small (Less than 1000 people)</Label>
@@ -142,8 +101,20 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
       ) : (
         <>
           <div className="space-y-2">
-            <Label htmlFor="org-select">Select Existing Organization</Label>
-            <Select value={selectedOrg} onValueChange={setSelectedOrg}>
+            <Label htmlFor="name">Organization Name</Label>
+            <Input
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="Enter organization name to search"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="selectedOrgId">Select Existing Organization</Label>
+            <Select name="selectedOrgId" value={formData.selectedOrgId} onValueChange={(value) => handleRadioChange('selectedOrgId', value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select an organization" />
               </SelectTrigger>
@@ -161,8 +132,9 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
             <Label htmlFor="org-id">Organization ID</Label>
             <Input
               id="org-id"
-              value={orgId}
-              onChange={(e) => setOrgId(e.target.value)}
+              name="selectedOrgId"
+              value={formData.selectedOrgId || ''}
+              onChange={handleInputChange}
               placeholder="Enter organization ID"
               required
             />
@@ -170,6 +142,9 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
         </>
       )}
 
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? 'Submitting...' : 'Submit'}
+      </Button>
     </form>
   )
 }
