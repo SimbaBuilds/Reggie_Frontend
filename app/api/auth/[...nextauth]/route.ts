@@ -25,14 +25,13 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/auth/login',
     error: '/auth/error',
   },
   callbacks: {
     async signIn({ account, profile }) {
       if (account?.provider === "google" && profile?.email) {
         try {
-          // Call your backend API for registration
           const response = await fetch(`${process.env.NEXT_PUBLIC_PYTHON_BACKEND_URL}/api/registration/signup/google`, {
             method: 'POST',
             headers: {
@@ -46,15 +45,26 @@ export const authOptions: NextAuthOptions = {
             }),
           });
 
-          if (response.ok) {
-            return true;
+          const data = await response.json();
+          console.log('Backend response:', data); // Debug log
+
+          // Check for user exists in the UserResponse object
+          if (data?.message === 'User already exists' || 
+              (data[0] && data[0].email === profile.email)) {
+            return `/auth/signin?message=${encodeURIComponent('Account already exists. Please sign in.')}`;
           }
 
-          const errorData = await response.json();
-          throw new Error(JSON.stringify(errorData));
+          if (!response.ok) {
+            // Pass the actual error message from the backend
+            const errorMessage = data?.detail || data?.message || 'Authentication failed';
+            return `/auth/error?error=${encodeURIComponent(errorMessage)}`;
+          }
+
+          return true;
         } catch (error) {
-          console.error('Registration error:', error);
-          return '/auth/error?error=' + encodeURIComponent(error as string);
+          console.error('Full error details:', error); // Debug log
+          const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
+          return `/auth/error?error=${encodeURIComponent(errorMessage)}`;
         }
       }
       return false;
@@ -87,7 +97,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  debug: true,
+  debug: false,
 };
 
 const handler = NextAuth(authOptions);

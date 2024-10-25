@@ -15,7 +15,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout()
-      router.push('/login');
+      router.push('/auth/login');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -42,7 +42,7 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link href="/login">
+              <Link href="/auth/login">
                 <Button variant="outline">Login</Button>
               </Link>
               <Button onClick={handleSignUp}>Sign Up</Button>

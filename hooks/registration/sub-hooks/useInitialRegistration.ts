@@ -42,6 +42,7 @@ export function useInitialRegistration() {
         description: "Your account has been created successfully.",
         duration: 5000,
       })
+      console.log('Sign up successful data:', data)
       return data
     } catch (error) {
       console.error('Error signing up:', error)
