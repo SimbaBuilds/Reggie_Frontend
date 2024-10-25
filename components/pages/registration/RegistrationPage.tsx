@@ -80,10 +80,23 @@ export function RegistrationPage() {
           registrationState={registrationState}
           onPrevious={goToPreviousStep}
         />
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-between w-full">
           {currentStep.key !== 'initialSignUp' && (
-            <Button onClick={goToPreviousStep} variant="outline">
+            <Button 
+              onClick={goToPreviousStep} 
+              variant="outline"
+              type="button"
+            >
               Previous
+            </Button>
+          )}
+          {currentStep.key !== 'initialSignUp' && (
+            <Button
+              onClick={() => handleSubmit(registrationState)}
+              variant="default"
+              type="submit"
+            >
+              {isLastStep ? 'Complete Registration' : 'Next'}
             </Button>
           )}
         </div>

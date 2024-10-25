@@ -12,7 +12,7 @@ import { useOrganizationDetails } from '@/hooks/registration/sub-hooks/useOrgani
 import { OrgData, ExistingOrganization, PlanData } from '@/types/types';
 
 
-export function OrganizationDetailsForm({ onSubmit, registrationState, onPrevious }: StepProps) {
+export function OrganizationDetailsForm({ onSubmit, registrationState }: StepProps) {
   const [name, setName] = useState(registrationState.organization.name)
   const [type, setType] = useState<'school' | 'district' | 'other'>(registrationState.organization.type || 'school')
   const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size || 'small')
@@ -65,7 +65,6 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
       } else {
         await joinExistingOrganization(selectedOrg)
       }
-      console.log("Form submission successful")
       onSubmit(organizationData)
     } catch (error) {
       console.error("Error submitting form:", error)
@@ -171,14 +170,6 @@ export function OrganizationDetailsForm({ onSubmit, registrationState, onPreviou
         </>
       )}
 
-      <div className="flex justify-between">
-        <Button type="button" onClick={onPrevious} variant="outline">
-          Previous
-        </Button>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Next"}
-        </Button>
-      </div>
     </form>
   )
 }
