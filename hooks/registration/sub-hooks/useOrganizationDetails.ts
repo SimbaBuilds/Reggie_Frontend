@@ -26,6 +26,15 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleRadioChangeNewExisting = (name: string, value: string) => {
+    console.log(`Radio changed: ${name} = ${value}`);
+    if (value === "new") {
+      setFormData(prev => ({ ...prev, [name]: true }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: false }));
+    }
+  };
+
   const handleRadioChange = (name: string, value: string) => {
     console.log(`Radio changed: ${name} = ${value}`);
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -106,6 +115,7 @@ export function useOrganizationDetails(registrationState: RegistrationState) {
     isLoading,
     handleInputChange,
     handleRadioChange,
+    handleRadioChangeNewExisting,
     checkExistingOrganization,
     handleSubmit,
   };

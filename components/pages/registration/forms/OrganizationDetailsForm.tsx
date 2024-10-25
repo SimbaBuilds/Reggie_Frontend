@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useOrganizationDetails } from '@/hooks/registration/sub-hooks/useOrganizationDetails'
 import { StepProps } from '../RegistrationPage'
 
@@ -16,6 +15,7 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
     isLoading,
     handleInputChange,
     handleRadioChange,
+    handleRadioChangeNewExisting,
     checkExistingOrganization,
     handleSubmit,
   } = useOrganizationDetails(registrationState);
@@ -27,27 +27,23 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
   }, [formData.isNewOrg, formData.name, formData.selectedOrgId, checkExistingOrganization]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
-    console.log('Form submission triggered'); // Add this line
     e.preventDefault();
-    console.log('Starting organization registration process...');
-    console.log('Form data:', formData);
     try {
-      console.log('Submitting organization details...');
-      const { orgData, isPrimaryUser } = await handleSubmit(e);
-      console.log('Organization registration successful:', orgData);
-      console.log('Is primary user:', isPrimaryUser);
-      onSubmit({ ...orgData, isPrimaryUser });
+      const result = await handleSubmit(e);
+      onSubmit(result);
     } catch (error) {
-      console.error('Error in organization registration:', error);
-      // Error is already handled in the hook
+      // Error is already handled in handleSubmit
     }
   };
 
   return (
     <form onSubmit={onFormSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="org-type">Organization Type</Label>
-        <RadioGroup value={formData.isNewOrg ? "new" : "existing"} onValueChange={(value) => handleRadioChange('isNewOrg', value === "new" ? "true" : "false")}>
+        <Label htmlFor="org-type">Organization New/Existing</Label>
+        <RadioGroup 
+          value={formData.isNewOrg ? "new" : "existing"} 
+          onValueChange={(value) => handleRadioChangeNewExisting('isNewOrg', value)}
+        >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="new" id="new" />
             <Label htmlFor="new">New Organization</Label>
@@ -124,38 +120,18 @@ export function OrganizationDetailsForm({ onSubmit, registrationState }: StepPro
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Enter organization name to search"
+              placeholder="Enter existing organization name"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="selectedOrgId">Select Existing Organization</Label>
-            <Select 
-              name="selectedOrgId" 
-              value={formData.selectedOrgId?.toString()} 
-              onValueChange={(value) => handleRadioChange('selectedOrgId', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select an organization" />
-              </SelectTrigger>
-              <SelectContent>
-                {existingOrganizations.map((org) => (
-                  <SelectItem key={org.id} value={org.id.toString()}>
-                    {org.name} ({org.type}, {org.size})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="org-id">Organization ID</Label>
+            <Label htmlFor="selectedOrgId">Organization ID</Label>
             <Input
-              id="org-id"
+              id="selectedOrgId"
               name="selectedOrgId"
-              value={formData.selectedOrgId || ''}
-              onChange={handleInputChange}
+              value={formData.selectedOrgId?.toString() || ''}
+              onChange={(e) => handleInputChange(e)}
               placeholder="Enter organization ID"
               required
             />
