@@ -11,4 +11,5 @@ export interface AuthContextType {
   isLoading: boolean
   getToken: () => Promise<string | null>
   initiateGoogleLogin: () => Promise<string | null>
+  clearGoogleCache: () => void
 }

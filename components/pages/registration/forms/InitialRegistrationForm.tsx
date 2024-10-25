@@ -21,22 +21,12 @@ export function InitialRegistrationForm({ onSubmit, registrationState, onPreviou
     signupError,
     passwordStrength,
     isLoading,
-    onSubmitForm,
+    onSubmitSignUpForm,
     handleGoogleSignUpClick
   } = useInitialRegistration()
 
-  const clearGoogleCache = () => {
-    // Clear Google's OAuth cache
-    window.location.href = 'https://accounts.google.com/logout';
-    
-    // After a brief delay, redirect back to your app
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 1000);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
-    onSubmitForm(e, onSubmit)
+    onSubmitSignUpForm(e, onSubmit)
   }
 
   return (

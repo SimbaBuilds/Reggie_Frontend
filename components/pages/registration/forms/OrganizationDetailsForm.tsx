@@ -14,8 +14,8 @@ import { OrgData, ExistingOrganization, PlanData } from '@/types/types';
 
 export function OrganizationDetailsForm({ onSubmit, registrationState, onPrevious }: StepProps) {
   const [name, setName] = useState(registrationState.organization.name)
-  const [type, setType] = useState<'school' | 'district' | 'other'>(registrationState.organization.type)
-  const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size)
+  const [type, setType] = useState<'school' | 'district' | 'other'>(registrationState.organization.type || 'school')
+  const [size, setSize] = useState<'small' | 'large'>(registrationState.organization.size || 'small')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isNewOrg, setIsNewOrg] = useState(true)
   const [selectedOrg, setSelectedOrg] = useState('')

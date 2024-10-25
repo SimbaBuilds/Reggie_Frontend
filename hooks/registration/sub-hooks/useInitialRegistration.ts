@@ -58,7 +58,7 @@ export function useInitialRegistration() {
     }
   }
 
-  const onSubmitForm = async (e: React.FormEvent, onSubmit: (data: UserResponse) => Promise<void>) => {
+  const onSubmitSignUpForm = async (e: React.FormEvent, onSubmit: (data: UserResponse) => Promise<void>) => {
     e.preventDefault()
     if (isLoading) return // Prevent multiple submissions
     if (!passwordStrength.length || !passwordStrength.numberOrSymbol || !passwordStrength.match) {
@@ -129,7 +129,7 @@ export function useInitialRegistration() {
     passwordStrength,
     isLoading,
     error,
-    onSubmitForm,
+    onSubmitSignUpForm,
     handleGoogleSignUpClick,
     handleSignUp
   }

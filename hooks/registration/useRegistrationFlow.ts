@@ -53,7 +53,7 @@ export function useRegistrationFlow(initialStep?: string | null) {
       type: null,
       size: null,
       isPrimaryUser: false,
-      userAccounts: 0,
+      userAccounts: 0, 
     },
     integrations: {
       googleConnected: false,
@@ -94,12 +94,13 @@ export function useRegistrationFlow(initialStep?: string | null) {
   }, []);
 
   const handleInitialSignUp = async (signUpResult: UserResponse) => {
-    try {
-      updateRegistrationState({ currentStep: { key: 'initialSignUp', completed: true } });
-    } catch (error) {
-      console.error('Error during initial sign up:', error);
-      throw error;
-    }
+  
+      updateRegistrationState({ 
+        currentStep: { 
+          key: 'initialSignUp', 
+          completed: true 
+      }
+    });
   };
 
   const handleOrganizationDetails = async (orgData: OrgData): Promise<void> => {

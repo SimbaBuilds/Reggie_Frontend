@@ -76,6 +76,12 @@ export function useAuth(): AuthContextType {
     }
   }
 
+
+  const clearGoogleCache = () => {
+    // Clear Google's OAuth cache
+    window.location.href = 'https://accounts.google.com/logout';
+  }
+
   async function initiateGoogleLogin(): Promise<string | null> {
     try {
       const response = await fetch('/api/auth/signin/google');
@@ -99,5 +105,6 @@ export function useAuth(): AuthContextType {
     isLoading,
     getToken,
     initiateGoogleLogin,
+    clearGoogleCache
   }
 }
